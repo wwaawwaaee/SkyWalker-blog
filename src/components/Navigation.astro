@@ -1,0 +1,158 @@
+---
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+---
+
+<header class="site-nav-wrapper">
+  <nav class="site-nav">
+    <a href="/" class:list={['nav-link', { active: currentPath === '/' }]}>home</a>
+    <a href="/about" class:list={['nav-link', { active: currentPath === '/about' }]}>about</a>
+    <a href="/blog" class:list={['nav-link', { active: currentPath.startsWith('/blog') }]}>writings</a>
+    <button class="theme-toggle" aria-label="Toggle theme">
+      <span class="theme-icon sun">☀️</span>
+      <span class="theme-icon moon">🌙</span>
+    </button>
+  </nav>
+</header>
+
+<style>
+  .site-nav-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+  }
+
+  @media (max-width: 768px) {
+    .site-nav-wrapper {
+      background-color: var(--background-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .site-nav {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    display: flex;
+    gap: 1.5em;
+    align-items: center;
+  }
+
+  .nav-link {
+    background: none;
+    padding: 0;
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    transition: color 0.2s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--text-primary);
+    background: none;
+  }
+
+  .theme-toggle {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-icon {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .theme-icon.sun {
+    display: none;
+  }
+
+  .theme-icon.moon {
+    display: inline;
+  }
+
+  html[data-theme="dark"] .theme-icon.sun {
+    display: inline;
+  }
+
+  html[data-theme="dark"] .theme-icon.moon {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .site-nav {
+      padding: 12px 15px;
+      gap: 1em;
+    }
+  }
+</style>
+
+<script>
+  function initTheme() {
+    const html = document.documentElement;
+    const storedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (storedTheme === 'dark' || (storedTheme === null && prefersDark)) {
+      html.setAttribute('data-theme', 'dark');
+    } else if (storedTheme === 'light') {
+      html.setAttribute('data-theme', 'light');
+    }
+  }
+
+  function setupThemeToggle() {
+    const toggle = document.querySelector('.theme-toggle');
+    if (!toggle) return;
+
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  }
+
+  function applyMobileNavBackground() {
+    const wrapper = document.querySelector('.site-nav-wrapper');
+    if (!wrapper) return;
+    
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark' || 
+        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && 
+         document.documentElement.getAttribute('data-theme') !== 'light');
+      wrapper.style.backgroundColor = isDark ? '#121212' : '#ffffff';
+    } else {
+      wrapper.style.removeProperty('background-color');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    setupThemeToggle();
+
+    const toggle = document.querySelector('.theme-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        setTimeout(applyMobileNavBackground, 0);
+      });
+    }
+
+    applyMobileNavBackground();
+    window.addEventListener('resize', applyMobileNavBackground);
+  });
+</script>

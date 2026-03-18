@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Blog - John Doe" currentPath="/blog">
+  <div class="container">
+    <h1>Writings</h1>
+    
+    <p>Thoughts on software engineering, technology, and life.</p>
+    
+    <div class="posts-list">
+      <article class="post-item">
+        <span class="post-date">2024.01.15</span>
+        <a href="/blog/my-first-post" class="post-title">My First Post</a>
+      </article>
+    </div>
+    
+    <p><a href="/">← Back to home</a></p>
+  </div>
+</BaseLayout>
+
+<style>
+  .posts-list {
+    margin: 2em 0;
+  }
+
+  .post-item {
+    display: flex;
+    gap: 1em;
+    margin-bottom: 1.2em;
+    align-items: baseline;
+  }
+
+  .post-date {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    flex-shrink: 0;
+  }
+
+  .post-title {
+    background: none;
+    padding: 0;
+    color: var(--link-color);
+  }
+
+  .post-title:hover {
+    color: var(--text-primary);
+  }
+</style>

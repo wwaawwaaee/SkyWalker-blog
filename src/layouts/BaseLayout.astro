@@ -1,0 +1,65 @@
+---
+import Navigation from '../components/Navigation.astro';
+import ParticleBackground from '../components/ParticleBackground.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  currentPath?: string;
+  showStickyNote?: boolean;
+}
+
+const { 
+  title, 
+  description = 'A personal blog',
+  currentPath = Astro.url.pathname,
+  showStickyNote = false
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content={description}>
+  <title>{title}</title>
+  <link rel="icon" href="/img/icon.png">
+  <script is:inline>
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else if (t === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <ParticleBackground />
+  <Navigation currentPath={currentPath} />
+  
+  <main>
+    <slot />
+  </main>
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+      var el = document.querySelector('.container');
+      if (el) {
+        el.classList.add('fade-up');
+        requestAnimationFrame(function() { el.classList.add('is-visible'); });
+      }
+    });
+  </script>
+</body>
+</html>
+
+<style>
+  main {
+    position: relative;
+    z-index: 1;
+  }
+</style>

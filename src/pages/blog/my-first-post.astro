@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="My First Post - John Doe" currentPath="/blog">
+  <div class="container">
+    <article>
+      <h1>My First Post</h1>
+      <p class="post-meta">January 15, 2024</p>
+      
+      <p>Welcome to my blog! This is my first post, and I'm excited to start sharing my thoughts and experiences.</p>
+      
+      <h2>Why I Started Writing</h2>
+      <p>I believe that writing things down is one of the most powerful habits you can develop. It helps you clarify your thoughts, remember ideas, and share knowledge with others.</p>
+      
+      <p>Through this blog, I hope to document my journey, share what I learn, and maybe help others along the way.</p>
+      
+      <h2>What to Expect</h2>
+      <p>I'll be writing about:</p>
+      <ul>
+        <li>Software engineering and web development</li>
+        <li>Tools and workflows that improve productivity</li>
+        <li>Personal development and learning</li>
+        <li>Interesting projects I'm working on</li>
+      </ul>
+      
+      <p>Stay tuned for more!</p>
+    </article>
+    
+    <p><a href="/blog">← Back to blog</a></p>
+  </div>
+</BaseLayout>
+
+<style>
+  .post-meta {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-bottom: 2em;
+  }
+</style>

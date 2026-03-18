@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StickyNote from '../components/StickyNote.astro';
+---
+
+<BaseLayout title="John Doe - Personal Blog" showStickyNote={true}>
+  <div class="container">
+    <StickyNote />
+    
+    <p>heya, i'm <strong>John Doe</strong>, aka john - <a href="/about">about me</a> <a href="/blog">writings</a></p>
+    
+    <p>i am currently working on software engineering at <strong>Tech Company</strong>. prior to this, i worked on various interesting projects and learned a lot along the way.</p>
+    
+    <p>interests: web development, machine learning, open source, building useful tools</p>
+    
+    <p>here are some things i believe in:</p>
+    <ul class="beliefs-list">
+      <li>agency is a superpower</li>
+      <li>taste is learnable</li>
+      <li>write things down</li>
+      <li><em>everything is figureoutable with friends</em></li>
+      <li>the world is hackable in <em>wholesome</em> ways</li>
+      <li>you'd probably love ssh config with named hosts</li>
+    </ul>
+    
+    <p>here are some things i like:</p>
+    <ul>
+      <li>mangoes, cold showers, trees, excalidraw, google docs, elegant code, trees, stargazing, skiing, meditation, green, intuitively understanding things, light mode, open source, cli, spicy food, blocks, connecting the dots (click around the empty places on this page!)</li>
+    </ul>
+    
+    <p>things i dislike:</p>
+    <ul>
+      <li>autotuning, pp communication, weight clip, powerpoint figures and all office tools</li>
+    </ul>
+    
+    <p>i love people and write back. <a href="/contact">send me a message!</a></p>
+  </div>
+</BaseLayout>
