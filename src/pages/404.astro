@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+---
+
+<BaseLayout title={`Not Found - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+  <div class="container not-found">
+    <p class="eyebrow">404</p>
+    <h1>That page is not here.</h1>
+    <p>The link may be outdated, or the page may have moved during a site rebuild.</p>
+    <p>
+      Try going back to the <a href="/">homepage</a>, browsing the <a href="/blog">writings</a>, or checking the <a href="/feed.xml">RSS feed</a>.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding-top: 120px;
+  }
+
+  .eyebrow {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+  }
+
+  .not-found h1 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+  }
+</style>

@@ -2,20 +2,21 @@
 import Navigation from '../components/Navigation.astro';
 import ParticleBackground from '../components/ParticleBackground.astro';
 import '../styles/global.css';
+import { SITE_TITLE } from '../consts';
 
 interface Props {
   title: string;
   description?: string;
   currentPath?: string;
-  showStickyNote?: boolean;
 }
 
 const { 
   title, 
   description = 'A personal blog',
-  currentPath = Astro.url.pathname,
-  showStickyNote = false
+  currentPath = Astro.url.pathname
 } = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
 ---
 
 <!DOCTYPE html>
@@ -24,8 +25,15 @@ const {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content={description}>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:site_name" content={SITE_TITLE}>
+  <meta property="og:url" content={canonicalUrl}>
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href={canonicalUrl}>
   <title>{title}</title>
-  <link rel="icon" href="/img/icon.png">
+  <link rel="icon" type="image/svg+xml" href="/img/icon.svg">
   <script is:inline>
     try {
       var t = localStorage.getItem('theme');
@@ -52,6 +60,34 @@ const {
         el.classList.add('fade-up');
         requestAnimationFrame(function() { el.classList.add('is-visible'); });
       }
+
+      var supportsFinePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!supportsFinePointer) return;
+
+      var surfaces = document.querySelectorAll('.interactive-surface');
+      surfaces.forEach(function(surface) {
+        surface.addEventListener('pointermove', function(event) {
+          var rect = surface.getBoundingClientRect();
+          var x = event.clientX - rect.left;
+          var y = event.clientY - rect.top;
+          var percentX = (x / rect.width) * 100;
+          var percentY = (y / rect.height) * 100;
+          var tiltY = ((percentX - 50) / 50) * 2;
+          var tiltX = ((50 - percentY) / 50) * 2;
+
+          surface.style.setProperty('--pointer-x', percentX + '%');
+          surface.style.setProperty('--pointer-y', percentY + '%');
+          surface.style.setProperty('--spotlight-opacity', '1');
+          surface.style.setProperty('--tilt-x', tiltX.toFixed(2) + 'deg');
+          surface.style.setProperty('--tilt-y', tiltY.toFixed(2) + 'deg');
+        });
+
+        surface.addEventListener('pointerleave', function() {
+          surface.style.setProperty('--spotlight-opacity', '0');
+          surface.style.setProperty('--tilt-x', '0deg');
+          surface.style.setProperty('--tilt-y', '0deg');
+        });
+      });
     });
   </script>
 </body>

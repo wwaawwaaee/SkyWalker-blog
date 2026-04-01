@@ -1,32 +1,25 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
-<BaseLayout title="About - John Doe" currentPath="/about">
+<BaseLayout title={`About - ${SITE_TITLE}`} description={SITE_DESCRIPTION} currentPath="/about">
   <div class="container">
-    <h1>About Me</h1>
-    
-    <p>Hello! I'm John Doe, a software engineer based in San Francisco. I love building things that are useful and elegant.</p>
-    
-    <h2>Background</h2>
-    <p>I studied Computer Science at Stanford University, where I developed a passion for web development and machine learning. Since graduating, I've been working at various tech companies, building products that help people.</p>
-    
-    <h2>What I Do</h2>
-    <p>Currently, I work as a software engineer at a tech company, focusing on building scalable web applications and exploring the intersection of technology and human experience.</p>
-    
-    <h2>When I'm Not Coding</h2>
-    <p>You can find me:</p>
+    <h1>About</h1>
+
+    <p>This project is an Astro-based blog focused on sustainable writing: content lives in Markdown, pages are statically generated, and the code stays small enough to maintain comfortably.</p>
+
+    <h2>What It Includes</h2>
     <ul>
-      <li>Exploring hiking trails in the Bay Area</li>
-      <li>Reading about philosophy and psychology</li>
-      <li>Experimenting with new recipes in the kitchen</li>
-      <li>Contributing to open source projects</li>
-      <li>Meditating and practicing mindfulness</li>
+      <li>Content collections for typed blog metadata</li>
+      <li>Static blog index and post pages</li>
+      <li>Theme support and responsive layout</li>
+      <li>Simple deployment to GitHub Pages</li>
     </ul>
-    
-    <h2>Contact</h2>
-    <p>Feel free to reach out! <a href="/contact">Send me a message</a> or find me on social media.</p>
-    
+
+    <h2>What To Customize</h2>
+    <p>Before publishing widely, replace the site title, description, domain, and contact details with your own. The current version is set up as a clean starter that is safe to extend.</p>
+
     <p><a href="/">← Back to home</a></p>
   </div>
 </BaseLayout>

@@ -1,38 +1,167 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import StickyNote from '../components/StickyNote.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
 ---
 
-<BaseLayout title="John Doe - Personal Blog" showStickyNote={true}>
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <div class="container">
-    <StickyNote />
-    
-    <p>heya, i'm <strong>John Doe</strong>, aka john - <a href="/about">about me</a> <a href="/blog">writings</a></p>
-    
-    <p>i am currently working on software engineering at <strong>Tech Company</strong>. prior to this, i worked on various interesting projects and learned a lot along the way.</p>
-    
-    <p>interests: web development, machine learning, open source, building useful tools</p>
-    
-    <p>here are some things i believe in:</p>
-    <ul class="beliefs-list">
-      <li>agency is a superpower</li>
-      <li>taste is learnable</li>
-      <li>write things down</li>
-      <li><em>everything is figureoutable with friends</em></li>
-      <li>the world is hackable in <em>wholesome</em> ways</li>
-      <li>you'd probably love ssh config with named hosts</li>
-    </ul>
-    
-    <p>here are some things i like:</p>
-    <ul>
-      <li>mangoes, cold showers, trees, excalidraw, google docs, elegant code, trees, stargazing, skiing, meditation, green, intuitively understanding things, light mode, open source, cli, spicy food, blocks, connecting the dots (click around the empty places on this page!)</li>
-    </ul>
-    
-    <p>things i dislike:</p>
-    <ul>
-      <li>autotuning, pp communication, weight clip, powerpoint figures and all office tools</li>
-    </ul>
-    
-    <p>i love people and write back. <a href="/contact">send me a message!</a></p>
+    <section class="hero">
+      <p class="eyebrow">Personal site and writing archive</p>
+      <h1>{SITE_TITLE}</h1>
+      <p class="hero-copy">{SITE_DESCRIPTION}</p>
+      <p class="hero-copy">Built for durable publishing: Markdown posts, static pages, simple deployment, and just enough interaction to make the site feel alive.</p>
+      <div class="hero-actions">
+        <a href="/blog" class="primary-link">Read the writings</a>
+        <a href="/feed.xml">Subscribe via RSS</a>
+      </div>
+    </section>
+
+    <section class="home-grid">
+      <div class="home-panel interactive-surface">
+        <h2>What this site is for</h2>
+        <ul class="beliefs-list">
+          <li>shipping notes before they get stale</li>
+          <li>turning project work into reusable knowledge</li>
+          <li>keeping a public record of experiments and decisions</li>
+          <li>publishing from plain files that stay portable</li>
+          <li>maintaining a site that remains easy to change</li>
+          <li>building a long-term writing habit</li>
+        </ul>
+      </div>
+
+      <div class="home-panel interactive-surface">
+        <h2>Included out of the box</h2>
+        <ul>
+          <li>Astro content collections for blog posts</li>
+          <li>generated RSS feed and sitemap</li>
+          <li>responsive layout and dark mode</li>
+          <li>clean static deployment on GitHub Pages</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="latest-posts">
+      <div class="section-header">
+        <h2>Latest posts</h2>
+        <a href="/blog">View all</a>
+      </div>
+
+      <div class="post-cards">
+        {latestPosts.map((post) => (
+          <article class="post-card interactive-surface">
+            <p class="post-date">{post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+            <h3><a href={`/blog/${post.slug}`}>{post.data.title}</a></h3>
+            <p>{post.data.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="home-footer-note">
+      <p>Next cleanup step: replace the generic about and contact copy with your real profile, links, and preferred publishing voice.</p>
+    </section>
   </div>
 </BaseLayout>
+
+<style>
+  .hero {
+    margin-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .hero h1 {
+    margin-top: 0;
+    margin-bottom: 0.85rem;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    line-height: 1.05;
+  }
+
+  .hero-copy {
+    max-width: 42rem;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
+  }
+
+  .primary-link {
+    background: var(--text-primary);
+    color: var(--background-color);
+  }
+
+  .primary-link:hover {
+    background: var(--text-secondary);
+  }
+
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .home-panel,
+  .post-card {
+    border: 1px solid var(--border-color);
+    background: color-mix(in srgb, var(--background-color) 92%, var(--nice-div-color) 8%);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+  }
+
+  .home-panel h2,
+  .latest-posts h2,
+  .post-card h3 {
+    margin-top: 0;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .post-cards {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .post-card p:last-child {
+    margin-bottom: 0;
+  }
+
+  .post-date {
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .home-footer-note {
+    margin-top: 2rem;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .home-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

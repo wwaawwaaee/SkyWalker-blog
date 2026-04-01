@@ -1,20 +1,37 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 ---
 
-<BaseLayout title="Blog - John Doe" currentPath="/blog">
+<BaseLayout title={`Writings - ${SITE_TITLE}`} currentPath="/blog">
   <div class="container">
     <h1>Writings</h1>
-    
-    <p>Thoughts on software engineering, technology, and life.</p>
-    
+
+    <p>Longer-form notes, essays, and build logs published from Markdown files.</p>
+
     <div class="posts-list">
-      <article class="post-item">
-        <span class="post-date">2024.01.15</span>
-        <a href="/blog/my-first-post" class="post-title">My First Post</a>
-      </article>
+      {posts.map((post) => (
+        <article class="post-item">
+          <span class="post-date">
+            {post.data.pubDate.toLocaleDateString('en-CA', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit'
+            }).replace(/-/g, '.')}
+          </span>
+          <div>
+            <a href={`/blog/${post.slug}`} class="post-title">{post.data.title}</a>
+            <p class="post-description">{post.data.description}</p>
+          </div>
+        </article>
+      ))}
     </div>
-    
+
     <p><a href="/">← Back to home</a></p>
   </div>
 </BaseLayout>
@@ -31,6 +48,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     align-items: baseline;
   }
 
+  .post-item > div {
+    min-width: 0;
+  }
+
   .post-date {
     color: var(--text-secondary);
     font-size: 0.9em;
@@ -45,5 +66,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   .post-title:hover {
     color: var(--text-primary);
+  }
+
+  .post-description {
+    margin-top: 0.35rem;
+    margin-bottom: 0;
+    color: var(--text-secondary);
+    font-size: 0.95em;
+  }
+
+  @media (max-width: 640px) {
+    .post-item {
+      flex-direction: column;
+      gap: 0.2em;
+    }
   }
 </style>

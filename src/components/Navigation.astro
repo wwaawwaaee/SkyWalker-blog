@@ -11,7 +11,7 @@ const { currentPath = '/' } = Astro.props;
     <a href="/" class:list={['nav-link', { active: currentPath === '/' }]}>home</a>
     <a href="/about" class:list={['nav-link', { active: currentPath === '/about' }]}>about</a>
     <a href="/blog" class:list={['nav-link', { active: currentPath.startsWith('/blog') }]}>writings</a>
-    <button class="theme-toggle" aria-label="Toggle theme">
+    <button type="button" class="theme-toggle" aria-label="Toggle theme">
       <span class="theme-icon sun">☀️</span>
       <span class="theme-icon moon">🌙</span>
     </button>
@@ -123,6 +123,7 @@ const { currentPath = '/' } = Astro.props;
       
       html.setAttribute('data-theme', newTheme);
       localStorage.setItem('theme', newTheme);
+      document.dispatchEvent(new CustomEvent('theme-change', { detail: { theme: newTheme } }));
     });
   }
 
