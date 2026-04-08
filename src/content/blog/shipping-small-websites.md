@@ -2,6 +2,7 @@
 title: Shipping Small Websites
 description: A short checklist for publishing and iterating on static sites without making them heavy.
 pubDate: 2026-03-12
+cover: /img/covers/small-websites.svg
 ---
 
 Small websites get better when they stay easy to change.

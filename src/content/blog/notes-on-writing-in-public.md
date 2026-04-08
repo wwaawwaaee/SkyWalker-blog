@@ -2,6 +2,7 @@
 title: Notes on Writing in Public
 description: Writing in public works best when the bar for publishing is low and the scope is clear.
 pubDate: 2026-02-05
+cover: /img/covers/writing-public.svg
 ---
 
 Writing in public does not require grand essays. It often starts with a sharp observation, a solved bug, or a pattern you want to remember.

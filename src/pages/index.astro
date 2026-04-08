@@ -3,11 +3,40 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
+function stripMarkdown(source: string) {
+  return source
+    .replace(/^---[\s\S]*?---/, '')
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[[^\]]+\]\([^)]*\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^[>*+-]\s+/gm, '')
+    .replace(/^\d+\.\s+/gm, '')
+    .replace(/[>*_~#-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function truncateText(source: string, length: number) {
+  const chars = Array.from(source);
+  return chars.length > length ? `${chars.slice(0, length).join('')}...` : source;
+}
+
 const latestPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
+  .slice(0, 4);
 
 const postCount = (await getCollection('blog', ({ data }) => !data.draft)).length;
+const previewPosts = latestPosts.map((post, index) => ({
+  index,
+  slug: post.slug,
+  title: post.data.title,
+  description: post.data.description,
+  dateLabel: post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }),
+  excerpt: truncateText(stripMarkdown(post.body), 50),
+  cover: post.data.cover ?? '',
+}));
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
@@ -15,21 +44,13 @@ const postCount = (await getCollection('blog', ({ data }) => !data.draft)).lengt
     <aside class="home-sidebar">
       <section class="profile-card sidebar-panel interactive-surface">
         <span class="section-kicker">简介</span>
-        <div class="profile-mark">S</div>
+        <img src="/img/logo.png" alt="SkyWalker 头像" class="profile-mark" />
         <h1>{SITE_AUTHOR}</h1>
         <p class="profile-lede">{SITE_DESCRIPTION}</p>
-        <p class="profile-note">这里用来放随笔、构建记录，以及那些不想被聊天记录淹没的想法。</p>
         <div class="profile-actions">
-          <a href="/blog" class="primary-link">进入文章页</a>
-          <a href="/feed.xml">订阅 RSS</a>
+          <a href="/blog" class="primary-link">进入文章</a>
+          <a href="/feed.xml">订阅</a>
         </div>
-      </section>
-
-      <section class="sidebar-panel intro-panel interactive-surface">
-        <span class="section-kicker">欢迎</span>
-        <h2>{SITE_TITLE}</h2>
-        <p class="intro-copy">这个首页强调可持续写作：文章使用 Markdown 管理，页面静态生成，交互保持克制。</p>
-        <p class="intro-copy">现在主体区域只保留文章流，左侧则作为更轻的个人信息栏。</p>
       </section>
 
       <section class="sidebar-panel stats-card interactive-surface">
@@ -48,7 +69,7 @@ const postCount = (await getCollection('blog', ({ data }) => !data.draft)).lengt
             <span>内置订阅</span>
           </div>
           <div>
-            <strong>深色</strong>
+            <strong>黑夜</strong>
             <span>主题可切换</span>
           </div>
         </div>
@@ -56,39 +77,119 @@ const postCount = (await getCollection('blog', ({ data }) => !data.draft)).lengt
 
       <section class="sidebar-panel quick-links interactive-surface">
         <span class="section-kicker">快捷入口</span>
-        <a href="/about">关于本站</a>
+        <a href="/about">关于我</a>
         <a href="/contact">联系</a>
         <a href="/sitemap-index.xml">站点地图</a>
       </section>
     </aside>
 
     <main class="home-main page-shell">
-      <section class="content-card latest-posts-section">
+      <section class="content-card latest-posts-section" data-preview-posts={JSON.stringify(previewPosts)}>
         <div class="section-header">
           <div>
             <span class="section-kicker">最近写作</span>
-            <h2>最新文章</h2>
+            <h2>文章</h2>
           </div>
           <a href="/blog">查看全部</a>
         </div>
 
-        <div class="post-list">
-          {latestPosts.map((post) => (
-            <article class="post-row interactive-surface">
-              <div class="post-row-meta">
-                <span>{post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+        <div class="writing-stage">
+          <div class="post-list" role="list">
+            {previewPosts.map((post) => (
+              <article class:list={['post-row', 'interactive-surface', { active: post.index === 0 }]} data-preview-index={post.index}>
+                <div class="post-row-meta">
+                  <span>{post.dateLabel}</span>
+                </div>
+                <div class="post-row-body">
+                  <h3><a href={`/blog/${post.slug}`}>{post.title}</a></h3>
+                  <p>{post.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div class="preview-stage-wrap">
+            <div class="preview-ghost preview-ghost-top" aria-hidden="true"></div>
+
+            <a class="preview-stage interactive-surface" href={`/blog/${previewPosts[0].slug}`}>
+              <div class="preview-cover">
+                <img src={previewPosts[0].cover} alt="" class="preview-image" />
               </div>
-              <div class="post-row-body">
-                <h3><a href={`/blog/${post.slug}`}>{post.data.title}</a></h3>
-                <p>{post.data.description}</p>
+              <div class="preview-content">
+                <span class="section-kicker">封面预览</span>
+                <p class="preview-date">{previewPosts[0].dateLabel}</p>
+                <h3 class="preview-title">{previewPosts[0].title}</h3>
+                <p class="preview-excerpt">{previewPosts[0].excerpt}</p>
               </div>
-            </article>
-          ))}
+            </a>
+
+            <div class="preview-ghost preview-ghost-bottom" aria-hidden="true"></div>
+          </div>
         </div>
       </section>
     </main>
   </div>
 </BaseLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function () {
+    var section = document.querySelector('.latest-posts-section');
+    if (!section) return;
+
+    var rawPosts = section.getAttribute('data-preview-posts');
+    if (!rawPosts) return;
+
+    var posts = JSON.parse(rawPosts);
+    if (!posts.length) return;
+
+    var rows = Array.from(section.querySelectorAll('.post-row'));
+    var stage = section.querySelector('.preview-stage');
+    var image = section.querySelector('.preview-image');
+    var date = section.querySelector('.preview-date');
+    var title = section.querySelector('.preview-title');
+    var excerpt = section.querySelector('.preview-excerpt');
+    var topGhost = section.querySelector('.preview-ghost-top');
+    var bottomGhost = section.querySelector('.preview-ghost-bottom');
+    var activeIndex = 0;
+
+    function setGhost(card, post) {
+      if (!card || !post) return;
+      card.style.backgroundImage = 'url("' + post.cover + '")';
+    }
+
+    function render(index) {
+      var post = posts[index];
+      if (!post || !stage || !image || !date || !title || !excerpt) return;
+
+      activeIndex = index;
+      stage.classList.remove('preview-animating');
+      void stage.offsetWidth;
+      stage.classList.add('preview-animating');
+      stage.setAttribute('href', '/blog/' + post.slug);
+      image.setAttribute('src', post.cover);
+      date.textContent = post.dateLabel;
+      title.textContent = post.title;
+      excerpt.textContent = post.excerpt;
+
+      rows.forEach(function (row, rowIndex) {
+        row.classList.toggle('active', rowIndex === index);
+      });
+
+      var prev = posts[(index - 1 + posts.length) % posts.length];
+      var next = posts[(index + 1) % posts.length];
+      setGhost(topGhost, prev);
+      setGhost(bottomGhost, next);
+    }
+
+    rows.forEach(function (row) {
+      var index = Number(row.getAttribute('data-preview-index'));
+      row.addEventListener('mouseenter', function () { render(index); });
+      row.addEventListener('focusin', function () { render(index); });
+    });
+
+    render(activeIndex);
+  });
+</script>
 
 <style>
   .home-layout {
@@ -130,35 +231,27 @@ const postCount = (await getCollection('blog', ({ data }) => !data.draft)).lengt
   }
 
   .profile-card h1,
-  .intro-panel h2,
   .latest-posts-section h2 {
     margin-top: 0;
     margin-bottom: 0.4rem;
   }
 
   .profile-mark {
-    width: 3rem;
-    height: 3rem;
-    display: grid;
-    place-items: center;
+    width: 9.5rem;
+    height: 9.5rem;
+    display: block;
     margin-bottom: 0.8rem;
-    border-radius: 0.9rem;
-    background: linear-gradient(145deg, color-mix(in srgb, var(--text-primary) 92%, transparent), color-mix(in srgb, var(--text-secondary) 88%, transparent));
-    color: var(--background-color);
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.05em;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
   }
 
   .profile-lede,
   .profile-note,
-  .intro-copy,
-  .post-row p {
+  .post-row p,
+  .preview-excerpt {
     color: var(--text-secondary);
-  }
-
-  .intro-panel h2 {
-    font-size: 1.22rem;
   }
 
   .profile-actions {
@@ -217,14 +310,58 @@ const postCount = (await getCollection('blog', ({ data }) => !data.draft)).lengt
     gap: 1rem;
   }
 
+  .writing-stage {
+    display: grid;
+    grid-template-columns: minmax(480px, 1.55fr) minmax(180px, 0.42fr);
+    gap: 1.15rem;
+    align-items: stretch;
+  }
+
   .post-row {
     display: grid;
     grid-template-columns: 140px minmax(0, 1fr);
     gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 118px;
     border: 1px solid var(--border-color);
     border-radius: 18px;
     padding: 1rem 1.05rem;
     background: color-mix(in srgb, var(--background-color) 96%, var(--nice-div-color) 4%);
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .post-row::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background:
+      radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--background-color) 88%, transparent) 0%, transparent 52%),
+      linear-gradient(180deg, color-mix(in srgb, var(--background-color) 66%, transparent), transparent 48%);
+    transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .post-row.active {
+    border-color: color-mix(in srgb, var(--border-color) 40%, var(--text-secondary) 60%);
+    background: color-mix(in srgb, var(--background-color) 86%, var(--nice-div-color) 14%);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+  }
+
+  .post-row:hover,
+  .post-row:focus-within {
+    border-color: color-mix(in srgb, var(--border-color) 32%, var(--text-secondary) 68%);
+    background: color-mix(in srgb, var(--background-color) 90%, var(--nice-div-color) 10%);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.055);
+  }
+
+  .post-row:hover::after,
+  .post-row:focus-within::after,
+  .post-row.active::after {
+    opacity: 1;
   }
 
   .post-row-meta {
@@ -235,13 +372,197 @@ const postCount = (await getCollection('blog', ({ data }) => !data.draft)).lengt
   }
 
   .post-row-body h3 {
+    position: relative;
     margin-top: 0;
     margin-bottom: 0.35rem;
+    line-height: 1.35;
+    min-height: calc(1.35em * 2);
+  }
+
+  .post-row-body a {
+    position: relative;
+    display: inline-block;
+    background: none;
+    padding: 0;
+    box-shadow: none;
+    transform: none;
+    color: var(--text-primary);
+    text-decoration: none;
+    line-height: 1.35;
+    transition: color 0.22s ease;
+  }
+
+  .post-row-body a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.08rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.22s ease;
+  }
+
+  .post-row-body a:hover,
+  .post-row-body a:active {
+    color: var(--text-primary);
+    background: none;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .post-row:hover .post-row-body a,
+  .post-row.active .post-row-body a,
+  .post-row:focus-within .post-row-body a {
+    color: var(--text-primary);
+  }
+
+  .post-row:hover .post-row-body a::after,
+  .post-row.active .post-row-body a::after,
+  .post-row:focus-within .post-row-body a::after,
+  .post-row-body a:hover::after,
+  .post-row-body a:active::after {
+    transform: scaleX(1);
   }
 
   .post-row-body p,
   .post-row-body h3 {
     margin-bottom: 0;
+  }
+
+  .post-row-body {
+    display: grid;
+    align-content: start;
+    min-height: 100%;
+  }
+
+  .post-row-body p {
+    min-height: calc(1.55em * 2);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .post-row.interactive-surface,
+  .post-row.interactive-surface:hover,
+  .post-row.interactive-surface:active {
+    transform: none;
+  }
+
+  .post-row.interactive-surface::before {
+    display: none;
+  }
+
+  .post-row > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .preview-stage-wrap {
+    position: relative;
+    min-height: 420px;
+    padding-block: 2.6rem;
+  }
+
+  .preview-stage {
+    position: relative;
+    display: grid;
+    grid-template-rows: 220px auto;
+    min-height: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+    padding: 0;
+    background: color-mix(in srgb, var(--background-color) 95%, var(--nice-div-color) 5%);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.09);
+  }
+
+  .preview-stage.preview-animating .preview-image,
+  .preview-stage.preview-animating .preview-content {
+    animation: previewFade 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .preview-cover {
+    min-height: 220px;
+    background: color-mix(in srgb, var(--nice-div-color) 76%, transparent);
+  }
+
+  .preview-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  .preview-content {
+    padding: 0.85rem 0.85rem 1rem;
+  }
+
+  .preview-date {
+    margin-top: 0;
+    margin-bottom: 0.3rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+  }
+
+  .preview-title {
+    margin-top: 0;
+    margin-bottom: 0.45rem;
+    font-size: clamp(1rem, 1.3vw, 1.2rem);
+    line-height: 1.2;
+  }
+
+  .preview-excerpt {
+    margin-bottom: 0;
+    max-width: 14rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .preview-ghost {
+    position: absolute;
+    right: 0;
+    width: 88%;
+    height: 66px;
+    border-radius: 14px;
+    background-color: color-mix(in srgb, var(--nice-div-color) 90%, transparent);
+    background-position: center;
+    background-size: cover;
+    filter: grayscale(1) saturate(0) brightness(0.86);
+    opacity: 0.68;
+    transform: scale(0.78);
+    transition: background-image 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .preview-ghost::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(120,120,120,0.28));
+  }
+
+  .preview-ghost-top {
+    top: 0.25rem;
+  }
+
+  .preview-ghost-bottom {
+    bottom: 0.25rem;
+  }
+
+  @keyframes previewFade {
+    0% {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   @media (max-width: 960px) {
@@ -258,12 +579,43 @@ const postCount = (await getCollection('blog', ({ data }) => !data.draft)).lengt
       border-left-width: 0;
       padding-left: 0;
     }
+
+    .writing-stage {
+      grid-template-columns: 1fr;
+    }
+
+    .preview-stage-wrap {
+      min-height: auto;
+      order: -1;
+      padding-block: 0;
+    }
+
+    .preview-ghost {
+      display: none;
+    }
   }
 
   @media (max-width: 768px) {
     .post-row,
     .stat-grid {
       grid-template-columns: 1fr;
+    }
+
+    .post-row {
+      min-height: 0;
+    }
+
+    .post-row-body h3,
+    .post-row-body p {
+      min-height: 0;
+    }
+
+    .preview-cover {
+      min-height: 220px;
+    }
+
+    .preview-stage {
+      grid-template-rows: 220px auto;
     }
   }
 

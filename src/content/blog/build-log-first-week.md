@@ -2,6 +2,7 @@
 title: Build Log, Week One
 description: A sample build-log entry showing how progress updates can live alongside essays and notes.
 pubDate: 2026-01-18
+cover: /img/covers/build-log.svg
 ---
 
 This week the site moved from a hand-written prototype to a content-driven blog.
