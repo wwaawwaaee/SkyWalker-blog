@@ -69,6 +69,11 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+  background-image:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--nice-div-color) 78%, transparent) 0, transparent 30%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--nice-div-color) 48%, transparent) 0, transparent 24%),
+    linear-gradient(180deg, var(--gradient-top), var(--gradient-bottom));
+  background-attachment: fixed;
 }
 
 a {
@@ -128,10 +133,37 @@ select {
 }
 
 .container {
-  max-width: 650px;
-  margin: 0 auto;
-  padding: 20px;
-  padding-top: 80px;
+  width: min(1440px, calc(100vw - 32px));
+  margin-left: max(16px, calc((100vw - 1440px) / 2 + 8px));
+  margin-right: auto;
+  padding: 24px;
+  padding-top: 96px;
+}
+
+.page-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.page-shell.narrow {
+  max-width: 760px;
+}
+
+.content-card {
+  border: 1px solid var(--border-color);
+  background: color-mix(in srgb, var(--background-color) 94%, var(--nice-div-color) 6%);
+  border-radius: 22px;
+  padding: 1.35rem 1.45rem;
+  box-shadow: 0 12px 28px rgba(20, 20, 20, 0.04);
+}
+
+.section-kicker {
+  display: inline-block;
+  margin-bottom: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 p {
@@ -199,8 +231,16 @@ blockquote {
 
 @media (max-width: 768px) {
   .container {
-    padding-top: 70px;
+    width: auto;
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 118px;
     font-size: 15px;
+  }
+
+  .content-card {
+    border-radius: 18px;
+    padding: 1.15rem 1.1rem;
   }
 }
 
@@ -208,7 +248,7 @@ blockquote {
   .container {
     font-size: 14px;
     padding: 15px;
-    padding-top: 60px;
+    padding-top: 126px;
   }
 }
 

@@ -4,19 +4,22 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
 <BaseLayout title={`Not Found - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
-  <div class="container not-found">
-    <p class="eyebrow">404</p>
-    <h1>That page is not here.</h1>
-    <p>The link may be outdated, or the page may have moved during a site rebuild.</p>
-    <p>
-      Try going back to the <a href="/">homepage</a>, browsing the <a href="/blog">writings</a>, or checking the <a href="/feed.xml">RSS feed</a>.
-    </p>
+  <div class="container page-shell narrow not-found-shell">
+    <section class="content-card not-found">
+      <p class="eyebrow">404</p>
+      <h1>That page is not here.</h1>
+      <p>The link may be outdated, or the page may have moved during a site rebuild.</p>
+      <p>
+        Try going back to the <a href="/">homepage</a>, browsing the <a href="/blog">writings</a>, or checking the <a href="/feed.xml">RSS feed</a>.
+      </p>
+    </section>
   </div>
 </BaseLayout>
 
 <style>
-  .not-found {
-    padding-top: 120px;
+  .not-found-shell {
+    min-height: calc(100vh - 140px);
+    align-content: center;
   }
 
   .eyebrow {

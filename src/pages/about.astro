@@ -4,22 +4,25 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
 <BaseLayout title={`About - ${SITE_TITLE}`} description={SITE_DESCRIPTION} currentPath="/about">
-  <div class="container">
-    <h1>About</h1>
+  <div class="container page-shell narrow">
+    <section class="content-card">
+      <span class="section-kicker">About</span>
+      <h1>About</h1>
 
-    <p>This project is an Astro-based blog focused on sustainable writing: content lives in Markdown, pages are statically generated, and the code stays small enough to maintain comfortably.</p>
+      <p>This project is an Astro-based blog focused on sustainable writing: content lives in Markdown, pages are statically generated, and the code stays small enough to maintain comfortably.</p>
 
-    <h2>What It Includes</h2>
-    <ul>
-      <li>Content collections for typed blog metadata</li>
-      <li>Static blog index and post pages</li>
-      <li>Theme support and responsive layout</li>
-      <li>Simple deployment to GitHub Pages</li>
-    </ul>
+      <h2>What It Includes</h2>
+      <ul>
+        <li>Content collections for typed blog metadata</li>
+        <li>Static blog index and post pages</li>
+        <li>Theme support and responsive layout</li>
+        <li>Simple deployment to GitHub Pages</li>
+      </ul>
 
-    <h2>What To Customize</h2>
-    <p>Before publishing widely, replace the site title, description, domain, and contact details with your own. The current version is set up as a clean starter that is safe to extend.</p>
+      <h2>What To Customize</h2>
+      <p>Before publishing widely, replace the site title, description, domain, and contact details with your own. The current version is set up as a clean starter that is safe to extend.</p>
 
-    <p><a href="/">← Back to home</a></p>
+      <p><a href="/">← Back to home</a></p>
+    </section>
   </div>
 </BaseLayout>
