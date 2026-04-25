@@ -10,8 +10,8 @@ const { currentPath = '/' } = Astro.props;
 const navItems = [
   { href: '/', label: '首页', active: currentPath === '/' },
   { href: '/about', label: '关于', active: currentPath === '/about' },
+  { href: '/publication', label: '发表', active: currentPath.startsWith('/publication') },
   { href: '/blog', label: '文章', active: currentPath.startsWith('/blog') },
-  { href: '/contact', label: '联系', active: currentPath === '/contact' },
 ];
 ---
 
@@ -243,10 +243,11 @@ const navItems = [
       justify-content: space-between;
       margin-left: 0;
       padding-top: 0.2rem;
+      flex-wrap: wrap;
     }
 
     .nav-link {
-      flex: 1 1 0;
+      flex: 1 1 calc(20% - 0.2rem);
       min-width: 0;
       padding-inline: 0.7rem;
     }

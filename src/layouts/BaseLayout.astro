@@ -12,7 +12,7 @@ interface Props {
 
 const { 
   title, 
-  description = 'A personal blog',
+  description = '一个持续写作的个人站点',
   currentPath = Astro.url.pathname
 } = Astro.props;
 
@@ -20,7 +20,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toStri
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

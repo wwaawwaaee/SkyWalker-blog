@@ -3,26 +3,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
-<BaseLayout title={`About - ${SITE_TITLE}`} description={SITE_DESCRIPTION} currentPath="/about">
+<BaseLayout title={`关于 - ${SITE_TITLE}`} description={SITE_DESCRIPTION} currentPath="/about">
   <div class="container page-shell narrow">
     <section class="content-card">
-      <span class="section-kicker">About</span>
-      <h1>About</h1>
+      <span class="section-kicker">关于</span>
+      <h1>关于</h1>
 
-      <p>This project is an Astro-based blog focused on sustainable writing: content lives in Markdown, pages are statically generated, and the code stays small enough to maintain comfortably.</p>
+      <p>我是 Zheyu Zhang。</p>
 
-      <h2>What It Includes</h2>
+
+      <h2>研究与兴趣</h2>
       <ul>
-        <li>Content collections for typed blog metadata</li>
-        <li>Static blog index and post pages</li>
-        <li>Theme support and responsive layout</li>
-        <li>Simple deployment to GitHub Pages</li>
+        <li>数学与神经网络</li>
       </ul>
 
-      <h2>What To Customize</h2>
-      <p>Before publishing widely, replace the site title, description, domain, and contact details with your own. The current version is set up as a clean starter that is safe to extend.</p>
+      <h2>关于这个网站</h2>
+      <p>这个网站不会刻意追求过度设计，而更强调信息组织与长期可读性。blog 用来承载动态写作与阶段性思考，publication 用来保留更正式、更适合引用的成果。它的最终形态会随着内容本身慢慢长出来。</p>
 
-      <p><a href="/">← Back to home</a></p>
+      <h2>说明</h2>
+      <p>这个网站会继续随着内容本身慢慢调整结构与信息密度，优先保证写作、publication 与项目记录的可读性。</p>
+
+      <p><a href="/">← 返回首页</a></p>
     </section>
   </div>
 </BaseLayout>

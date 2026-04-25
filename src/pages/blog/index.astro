@@ -38,7 +38,7 @@ const previewPosts = posts.map((post, index) => ({
 }));
 ---
 
-<BaseLayout title={`Writings - ${SITE_TITLE}`} currentPath="/blog">
+<BaseLayout title={`文章 - ${SITE_TITLE}`} currentPath="/blog">
   <div class="container archive-layout">
     <section class="archive-copy content-card">
       <span class="section-kicker">归档</span>
@@ -350,7 +350,7 @@ const previewPosts = posts.map((post, index) => ({
   }
 
   .preview-cover {
-    min-height: 380px;
+    aspect-ratio: 16 / 9;
     background: color-mix(in srgb, var(--nice-div-color) 76%, transparent);
   }
 
@@ -471,7 +471,7 @@ const previewPosts = posts.map((post, index) => ({
     }
 
     .preview-cover {
-      min-height: 260px;
+      aspect-ratio: 16 / 9;
     }
   }
 </style>

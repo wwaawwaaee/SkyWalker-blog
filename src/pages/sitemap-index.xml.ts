@@ -1,7 +1,7 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
 
-const staticPages = ['/', '/about/', '/blog/', '/contact/', '/404.html', '/feed.xml'];
+const staticPages = ['/', '/about/', '/blog/', '/publication/', '/404.html', '/feed.xml'];
 
 export const GET: APIRoute = async ({ site }) => {
   const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(

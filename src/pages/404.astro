@@ -3,14 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
-<BaseLayout title={`Not Found - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+<BaseLayout title={`页面不存在 - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
   <div class="container page-shell narrow not-found-shell">
     <section class="content-card not-found">
       <p class="eyebrow">404</p>
-      <h1>That page is not here.</h1>
-      <p>The link may be outdated, or the page may have moved during a site rebuild.</p>
+      <h1>这个页面不存在。</h1>
+      <p>这个链接可能已经失效，或者页面在网站重构过程中被移动了位置。</p>
       <p>
-        Try going back to the <a href="/">homepage</a>, browsing the <a href="/blog">writings</a>, or checking the <a href="/feed.xml">RSS feed</a>.
+        你可以返回 <a href="/">首页</a>，浏览 <a href="/blog">文章列表</a>，或者查看 <a href="/feed.xml">RSS 订阅</a>。
       </p>
     </section>
   </div>

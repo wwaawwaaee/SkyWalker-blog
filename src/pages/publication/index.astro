@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+
+const publications = (await getCollection('publication', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout title={`发表 - ${SITE_TITLE}`} description={SITE_DESCRIPTION} currentPath="/publication">
+  <div class="container publication-layout">
+    <section class="publication-intro content-card">
+      <span class="section-kicker">Publication</span>
+      <h1>发表与出版</h1>
+      <p>这里会收录以后更正式的输出，比如论文、刊物文章、专题专栏、会议摘要，或者适合长期引用的完整作品。</p>
+    </section>
+
+    <section class="publication-list content-card">
+      {publications.map((item) => (
+        <article class="publication-item">
+          <div class="publication-body">
+            <h2>{item.data.title}</h2>
+            {item.data.authors.length > 0 && <p class="publication-authors">{item.data.authors.join(' · ')}</p>}
+            {item.data.affiliation && <p class="publication-affiliation">{item.data.affiliation}</p>}
+            {item.data.venue && <p class="publication-venue"><em>{item.data.venue}</em>{item.data.venueDetail ? ` · ${item.data.venueDetail}` : ''}</p>}
+            <p class="publication-description">{item.data.description}</p>
+            <div class="publication-actions">
+              {item.data.blogLink && <a href={item.data.blogLink}>博客解读</a>}
+              {item.data.officialLink && <a href={item.data.officialLink}>官方链接</a>}
+            </div>
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <p class="publication-back-link"><a href="/">← 返回首页</a></p>
+  </div>
+</BaseLayout>
+
+<style>
+  .publication-layout {
+    display: grid;
+    gap: 1rem;
+    max-width: 1040px;
+  }
+
+  .publication-intro {
+    max-width: 760px;
+  }
+
+  .publication-intro h1 {
+    margin-top: 0;
+    margin-bottom: 0.55rem;
+  }
+
+  .publication-list {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .publication-item {
+    padding: 0.2rem 0 1rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+  }
+
+  .publication-body h2 {
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  .publication-authors,
+  .publication-affiliation,
+  .publication-venue,
+  .publication-description {
+    color: var(--text-secondary);
+    margin-bottom: 0.28rem;
+  }
+
+  .publication-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 0.75rem;
+  }
+
+  .publication-back-link {
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 960px) {
+    .publication-layout {
+      max-width: none;
+    }
+  }
+</style>

@@ -12,7 +12,7 @@ export const GET: APIRoute = async (context) => {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     site: context.site!,
-    customData: `<language>en-us</language>`,
+    customData: `<language>zh-cn</language>`,
     items: posts.map((post) => ({
       title: post.data.title,
       description: post.data.description,
