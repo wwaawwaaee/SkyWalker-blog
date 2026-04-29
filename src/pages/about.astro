@@ -1,29 +1,25 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const aboutPosts = await getCollection('about');
+const about = aboutPosts[0];
+const { Content } = await about.render();
 ---
 
 <BaseLayout title={`关于 - ${SITE_TITLE}`} description={SITE_DESCRIPTION} currentPath="/about">
   <div class="container page-shell narrow">
     <section class="content-card">
       <span class="section-kicker">关于</span>
-      <h1>关于</h1>
-
-      <p>我是 Zheyu Zhang。</p>
-
-
-      <h2>研究与兴趣</h2>
-      <ul>
-        <li>数学与神经网络</li>
-      </ul>
-
-      <h2>关于这个网站</h2>
-      <p>这个网站不会刻意追求过度设计，而更强调信息组织与长期可读性。blog 用来承载动态写作与阶段性思考，publication 用来保留更正式、更适合引用的成果。它的最终形态会随着内容本身慢慢长出来。</p>
-
-      <h2>说明</h2>
-      <p>这个网站会继续随着内容本身慢慢调整结构与信息密度，优先保证写作、publication 与项目记录的可读性。</p>
-
-      <p><a href="/">← 返回首页</a></p>
+      <Content />
+      <p class="back-link"><a href="/">← 返回首页</a></p>
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .back-link {
+    margin-top: 2em;
+  }
+</style>

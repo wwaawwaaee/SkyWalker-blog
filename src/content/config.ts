@@ -30,7 +30,15 @@ const publication = defineCollection({
   }),
 });
 
+const about = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+  }),
+});
+
 export const collections = {
   blog,
   publication,
+  about,
 };

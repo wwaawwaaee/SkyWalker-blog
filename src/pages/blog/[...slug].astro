@@ -27,10 +27,12 @@ const { title, description, pubDate } = post.data;
     <article>
       <h1>{title}</h1>
       <p class="post-meta">{pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-      <Content />
+      <div class="post-content">
+        <Content />
+      </div>
     </article>
 
-    <p><a href="/blog">← 返回文章列表</a></p>
+    <p class="back-link"><a href="/blog">← 返回文章列表</a></p>
   </div>
 </BaseLayout>
 
@@ -39,5 +41,21 @@ const { title, description, pubDate } = post.data;
     color: var(--text-secondary);
     font-size: 0.9em;
     margin-bottom: 2em;
+  }
+
+  .post-content {
+    max-width: 60%;
+  }
+
+  .back-link {
+    max-width: 60%;
+    margin-top: 3em;
+  }
+
+  @media (max-width: 768px) {
+    .post-content,
+    .back-link {
+      max-width: 100%;
+    }
   }
 </style>
