@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE_AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
+const SELF_AUTHOR = 'Zheyu Zhang';
+
 function stripMarkdown(source: string) {
   return source
     .replace(/^---[\s\S]*?---/, '')
@@ -32,7 +34,24 @@ const publicationEntries = (await getCollection('publication', ({ data }) => !da
 );
 
 const publicationCount = publicationEntries.length;
-const latestPublication = publicationEntries[0];
+const latestPublications = publicationEntries.slice(0, 4);
+const homepagePublications = latestPublications.map((item) => {
+  const metadata = [
+    item.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }),
+    item.data.venue,
+    item.data.venueDetail,
+  ].filter(Boolean);
+
+  return {
+    title: item.data.title,
+    authors: item.data.authors,
+    description: item.data.description,
+    blogLink: item.data.blogLink,
+    officialLink: item.data.officialLink,
+    titleHref: item.data.officialLink ?? item.data.blogLink,
+    metadata: metadata.join(' · '),
+  };
+});
 const previewPosts = latestPosts.map((post, index) => ({
   index,
   slug: post.slug,
@@ -49,28 +68,58 @@ const previewPosts = latestPosts.map((post, index) => ({
     <aside class="home-sidebar">
       <section class="profile-card sidebar-panel researcher-card">
         <span class="section-kicker">Profile</span>
-        <img src="/img/logo.png" alt="SkyWalker 头像" class="profile-mark" />
-        <h1>Zheyu Zhang</h1>
-        <p class="profile-lede">SkyWalker · 北京理工大学</p>
-
-        <div class="identity-list">
-          <div>
-            <span class="identity-label">Website</span>
-            <a href="https://sky.axono.org">sky.axono.org</a>
-          </div>
-          <div>
-            <span class="identity-label">GitHub</span>
-            <a href="https://github.com/wwaawwaaee">github.com/wwaawwaaee</a>
-          </div>
-          <div>
-            <span class="identity-label">Email</span>
-            <a href="mailto:zheyu070821@gmail.com">zheyu070821@gmail.com</a>
-          </div>
-          <div>
-            <span class="identity-label">Email (BIT)</span>
-            <a href="mailto:zheyu.zhang@bit.edu.cn">zheyu.zhang@bit.edu.cn</a>
+        <div class="profile-header">
+          <img src="/img/logo.png" alt="Zheyu Zhang avatar" class="profile-mark" />
+          <div class="profile-copy">
+            <h1>Zheyu Zhang</h1>
+            <p class="profile-affiliation">Beijing Institute of Technology</p>
           </div>
         </div>
+
+        <nav class="profile-links" aria-label="Profile links">
+          <a href="https://sky.axono.org">
+            <svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M3 12h18"></path>
+              <path d="M12 3c2.2 2.45 3.3 5.45 3.3 9s-1.1 6.55-3.3 9c-2.2-2.45-3.3-5.45-3.3-9S9.8 5.45 12 3Z"></path>
+            </svg>
+            <span>Website</span>
+          </a>
+          <a href="https://github.com/wwaawwaaee">
+            <svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M8 18.5c-2.25-.75-3.9-2.75-3.9-5.35 0-1.35.48-2.62 1.32-3.62-.15-.8-.02-1.78.4-2.98 1.08.05 2.05.48 2.85 1.05A7.9 7.9 0 0 1 12 6.9c1.18 0 2.3.25 3.33.7.8-.57 1.77-1 2.85-1.05.42 1.2.55 2.18.4 2.98.84 1 1.32 2.27 1.32 3.62 0 2.6-1.65 4.6-3.9 5.35"></path>
+              <path d="M9.1 17.7c.45.35.68.82.68 1.42v1.48"></path>
+              <path d="M14.22 20.6v-1.48c0-.6.23-1.07.68-1.42"></path>
+            </svg>
+            <span>GitHub</span>
+          </a>
+          <a href="https://scholar.google.com/scholar?q=Zheyu+Zhang+Beijing+Institute+of+Technology">
+            <svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3 8.8 12 4l9 4.8-9 4.8L3 8.8Z"></path>
+              <path d="M6.8 11v4.1c1.4 1.15 3.15 1.72 5.2 1.72s3.8-.57 5.2-1.72V11"></path>
+              <path d="M20 9.4v5.25"></path>
+            </svg>
+            <span>Scholar</span>
+          </a>
+          <a href="mailto:zheyu070821@gmail.com">
+            <svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="3.5" y="5.5" width="17" height="13" rx="1.8"></rect>
+              <path d="m4.2 7 7.8 6.1L19.8 7"></path>
+            </svg>
+            <span>Email</span>
+          </a>
+          <a href="mailto:zheyu.zhang@bit.edu.cn">
+            <svg class="profile-link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 20h16"></path>
+              <path d="M5.5 9.2 12 4l6.5 5.2"></path>
+              <path d="M7 9.5h10V20H7V9.5Z"></path>
+              <path d="M10 20v-5h4v5"></path>
+              <path d="M9 12h1.4"></path>
+              <path d="M13.6 12H15"></path>
+            </svg>
+            <span>BIT Email</span>
+          </a>
+        </nav>
       </section>
     </aside>
 
@@ -91,45 +140,41 @@ const previewPosts = latestPosts.map((post, index) => ({
           <span class="publication-badge">{publicationCount === 0 ? '0 item' : `${publicationCount} item${publicationCount > 1 ? 's' : ''}`}</span>
         </div>
 
-        <div class="publication-stage">
-          <div class="publication-copy">
-            <p class="publication-lede">这一栏会用来整理以后公开发表的论文、刊物文章、会议摘要或更正式的长篇写作。</p>
-            {publicationCount === 0 ? (
-              <>
-                <p>现在还没有上传内容，但这里会与 blog 保持不同的气质：更稳定、更归档化，也更适合承载长期可引用的作品。</p>
-                <p class="publication-hint">以后只需要把内容放进 <code>src/content/publication</code>，这里就能自然长出来。点击可进入 publication 页面。</p>
-              </>
-            ) : (
-              <div class="publication-paper">
-                <div class="publication-paper-cover">
-                  <img src={latestPublication.data.cover} alt="" />
-                </div>
-                <div class="publication-paper-body">
-                  <p class="publication-paper-meta">
-                    <span>{latestPublication.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                    {latestPublication.data.venue && <span>{latestPublication.data.venue}</span>}
-                  </p>
-                  <h3>{latestPublication.data.title}</h3>
-                  {latestPublication.data.authors.length > 0 && <p class="publication-authors">{latestPublication.data.authors.join(' · ')}</p>}
-                  {latestPublication.data.affiliation && <p class="publication-affiliation">{latestPublication.data.affiliation}</p>}
-                  {latestPublication.data.venueDetail && <p class="publication-venue">{latestPublication.data.venueDetail}</p>}
-                  {latestPublication.data.abstract && <p class="publication-abstract">{latestPublication.data.abstract}</p>}
-                  <div class="publication-actions">
-                    {latestPublication.data.blogLink && <a href={latestPublication.data.blogLink}>博客解读</a>}
-                    {latestPublication.data.officialLink && <a href={latestPublication.data.officialLink}>官方链接</a>}
-                    <a href="/publication">查看全部发表</a>
+        {publicationCount === 0 ? (
+          <div class="publication-empty">
+            <p>现在还没有上传发表内容；可以先前往 <a href="/publication">publication 页面</a>查看归档入口。</p>
+          </div>
+        ) : (
+          <>
+            <div class="homepage-publication-list" role="list">
+              {homepagePublications.map((publication) => (
+                <article class="homepage-publication-item" role="listitem">
+                  <h3>
+                    {publication.titleHref ? <a href={publication.titleHref}>{publication.title}</a> : publication.title}
+                  </h3>
+                  {publication.authors.length > 0 && (
+                    <p class="homepage-publication-authors">
+                      {publication.authors.map((author, authorIndex) => (
+                        <>
+                          <span class:list={['homepage-publication-author', { 'is-self': author === SELF_AUTHOR }]}>{author}</span>
+                          {authorIndex < publication.authors.length - 1 && <span class="homepage-publication-author-separator" aria-hidden="true"> · </span>}
+                        </>
+                      ))}
+                    </p>
+                  )}
+                  {publication.metadata && <p class="homepage-publication-meta">{publication.metadata}</p>}
+                  {publication.description && <p class="homepage-publication-description">{publication.description}</p>}
+                  <div class="homepage-publication-links">
+                    {publication.blogLink && <a href={publication.blogLink}>博客解读</a>}
+                    {publication.officialLink && <a href={publication.officialLink}>官方链接</a>}
+                    {!publication.blogLink && !publication.officialLink && <a href="/publication">详情</a>}
                   </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div class="publication-placeholder" aria-hidden="true">
-            <div class="publication-stack publication-main"></div>
-            <div class="publication-stack publication-back publication-back-one"></div>
-            <div class="publication-stack publication-back publication-back-two"></div>
-          </div>
-        </div>
+                </article>
+              ))}
+            </div>
+            <p class="homepage-publication-footer"><a href="/publication">查看全部发表</a></p>
+          </>
+        )}
       </section>
 
       <section class="content-card latest-posts-section" data-preview-posts={JSON.stringify(previewPosts)}>
@@ -261,6 +306,10 @@ const previewPosts = latestPosts.map((post, index) => ({
     min-width: 0;
   }
 
+  .home-main > * {
+    min-width: 0;
+  }
+
   .home-quote-block {
     padding: 0.2rem 0 1rem;
     margin-bottom: 0.35rem;
@@ -284,22 +333,44 @@ const previewPosts = latestPosts.map((post, index) => ({
     align-items: stretch;
   }
 
-  .profile-card h1,
+  .profile-card h1 {
+    margin-top: 0;
+    margin-bottom: 0.18rem;
+  }
+
+  .publication-section h2,
   .latest-posts-section h2 {
     margin-top: 0;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.2rem;
+    font-size: clamp(1.05rem, 1.5vw, 1.28rem);
+    line-height: 1.2;
   }
 
   .profile-card h1 {
     white-space: nowrap;
-    font-size: 1.55rem;
+    font-size: 1.34rem;
+    line-height: 1.08;
+  }
+
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-copy {
+    min-width: 0;
   }
 
   .profile-mark {
-    width: 5.8rem;
-    height: 5.8rem;
+    width: min(10.95rem, 100%);
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
@@ -307,10 +378,17 @@ const previewPosts = latestPosts.map((post, index) => ({
   }
 
   .profile-lede,
+  .profile-affiliation,
   .profile-note,
   .post-row p,
   .preview-excerpt {
     color: var(--text-secondary);
+  }
+
+  .profile-affiliation {
+    margin-bottom: 0;
+    font-size: 0.8rem;
+    line-height: 1.35;
   }
 
   .profile-actions {
@@ -332,22 +410,13 @@ const previewPosts = latestPosts.map((post, index) => ({
     margin-bottom: 0.45rem;
   }
 
-  .identity-list {
+  .profile-links {
     display: grid;
-    gap: 0.38rem;
-    margin-top: 0.58rem;
-  }
-
-  .identity-list > div {
-    display: grid;
-    gap: 0.12rem;
-  }
-
-  .identity-label {
-    color: var(--text-secondary);
-    font-size: 0.74rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    gap: 0.34rem;
+    justify-items: start;
+    margin-top: 0.82rem;
+    font-size: 0.82rem;
+    line-height: 1.35;
   }
 
   .researcher-card a {
@@ -359,6 +428,24 @@ const previewPosts = latestPosts.map((post, index) => ({
     color: var(--text-primary);
     text-decoration: none;
     position: relative;
+  }
+
+  .profile-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.38rem;
+  }
+
+  .profile-link-icon {
+    width: 0.92rem;
+    height: 0.92rem;
+    flex: 0 0 auto;
+    color: var(--text-secondary);
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .researcher-card a::after {
@@ -400,8 +487,8 @@ const previewPosts = latestPosts.map((post, index) => ({
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.8rem;
+    gap: 0.8rem;
+    margin-bottom: 0.55rem;
   }
 
   .publication-section {
@@ -412,7 +499,7 @@ const previewPosts = latestPosts.map((post, index) => ({
   }
 
   .publication-header {
-    margin-bottom: 1rem;
+    margin-bottom: 0.55rem;
   }
 
   .publication-badge {
@@ -420,68 +507,174 @@ const previewPosts = latestPosts.map((post, index) => ({
     align-items: center;
     gap: 0.35rem;
     color: var(--text-secondary);
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 0.3rem 0.55rem;
+    padding: 0.22rem 0.48rem;
     border-radius: 999px;
     background: color-mix(in srgb, var(--nice-div-color) 72%, transparent);
   }
 
-  .publication-lede {
-    margin-bottom: 0.55rem;
-    color: var(--text-primary);
-  }
-
-  .publication-copy p:last-child {
-    margin-bottom: 0;
-    color: var(--text-secondary);
-  }
-
-  .publication-minimal {
-    margin-top: 0.8rem;
-    padding-top: 0.85rem;
+  .homepage-publication-list {
+    display: grid;
     border-top: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
   }
 
-  .publication-paper {
-    display: grid;
-    grid-template-columns: minmax(170px, 0.42fr) minmax(0, 1fr);
-    gap: 1rem;
-    margin-top: 0.9rem;
-    padding-top: 0.95rem;
-    border-top: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  .homepage-publication-item {
+    padding: 0.55rem 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
   }
 
-  .publication-paper-cover {
-    aspect-ratio: 4 / 5.4;
-    overflow: hidden;
-    border-radius: 16px;
-    border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
-    background: color-mix(in srgb, var(--nice-div-color) 82%, transparent);
-  }
-
-  .publication-paper-cover img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .publication-entry h3 {
+  .homepage-publication-item h3 {
     margin-top: 0;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.18rem;
+    font-size: 1rem;
+    line-height: 1.28;
   }
 
-  .publication-line {
-    margin-bottom: 0.25rem;
+  .homepage-publication-item h3 a {
+    position: relative;
+    display: inline;
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+    color: var(--text-primary);
+    text-decoration: none;
+    transform: none;
+  }
+
+  .homepage-publication-item h3 a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.08rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.22s ease;
+  }
+
+  .homepage-publication-item h3 a:hover,
+  .homepage-publication-item h3 a:active {
+    background: none;
+    box-shadow: none;
+    color: var(--text-primary);
+    transform: none;
+  }
+
+  .homepage-publication-item h3 a:hover::after,
+  .homepage-publication-item h3 a:active::after {
+    transform: scaleX(1);
+  }
+
+  .homepage-publication-authors,
+  .homepage-publication-meta,
+  .homepage-publication-description {
+    margin-bottom: 0.18rem;
     color: var(--text-secondary);
   }
 
-  .publication-actions {
+  .homepage-publication-meta {
+    font-size: 0.82rem;
+  }
+
+  .homepage-publication-authors,
+  .homepage-publication-description {
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .homepage-publication-author {
+    position: relative;
+    display: inline-block;
+  }
+
+  .homepage-publication-author.is-self {
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .homepage-publication-author.is-self::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.08rem;
+    height: 1px;
+    background: color-mix(in srgb, var(--text-primary) 78%, transparent);
+  }
+
+  .homepage-publication-author-separator {
+    color: color-mix(in srgb, var(--text-secondary) 84%, transparent);
+  }
+
+  .homepage-publication-description {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+
+  .homepage-publication-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.65rem;
+    gap: 0.55rem;
+    margin-top: 0.32rem;
+    font-size: 0.86rem;
+  }
+
+  .homepage-publication-footer {
+    margin-top: 0.55rem;
+    margin-bottom: 0;
+  }
+
+  .homepage-publication-links a,
+  .homepage-publication-footer a {
+    position: relative;
+    display: inline-block;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transform: none;
+    transition: color 0.22s ease;
+  }
+
+  .homepage-publication-links a::after,
+  .homepage-publication-footer a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.08rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.22s ease;
+  }
+
+  .homepage-publication-links a:hover,
+  .homepage-publication-links a:active,
+  .homepage-publication-footer a:hover,
+  .homepage-publication-footer a:active {
+    background: none;
+    box-shadow: none;
+    color: var(--text-primary);
+    transform: none;
+  }
+
+  .homepage-publication-links a:hover::after,
+  .homepage-publication-links a:active::after,
+  .homepage-publication-footer a:hover::after,
+  .homepage-publication-footer a:active::after {
+    transform: scaleX(1);
   }
 
   .publication-hint {
@@ -490,13 +683,20 @@ const previewPosts = latestPosts.map((post, index) => ({
     font-size: 0.92rem;
   }
 
+  .publication-empty p {
+    margin-bottom: 0;
+    color: var(--text-secondary);
+  }
+
   .latest-posts-section {
     border-color: color-mix(in srgb, var(--border-color) 68%, transparent);
   }
 
   .post-list {
     display: grid;
-    gap: 1rem;
+    gap: 0.7rem;
+    align-self: start;
+    min-width: 0;
   }
 
   .writing-stage {
@@ -504,18 +704,25 @@ const previewPosts = latestPosts.map((post, index) => ({
     grid-template-columns: minmax(480px, 1.55fr) minmax(180px, 0.42fr);
     gap: 1.15rem;
     align-items: stretch;
+    min-width: 0;
+  }
+
+  .writing-stage > * {
+    min-width: 0;
   }
 
   .post-row {
     display: grid;
-    grid-template-columns: 140px minmax(0, 1fr);
-    gap: 1rem;
+    grid-template-columns: 118px minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
+    min-width: 0;
     position: relative;
     overflow: hidden;
-    min-height: 118px;
+    min-height: 90px;
     border: 1px solid var(--border-color);
-    border-radius: 18px;
-    padding: 1rem 1.05rem;
+    border-radius: 14px;
+    padding: 0.7rem 0.8rem;
     background: color-mix(in srgb, var(--background-color) 96%, var(--nice-div-color) 4%);
     cursor: pointer;
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -537,14 +744,14 @@ const previewPosts = latestPosts.map((post, index) => ({
   .post-row.active {
     border-color: color-mix(in srgb, var(--border-color) 40%, var(--text-secondary) 60%);
     background: color-mix(in srgb, var(--background-color) 86%, var(--nice-div-color) 14%);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.035);
   }
 
   .post-row:hover,
   .post-row:focus-within {
     border-color: color-mix(in srgb, var(--border-color) 32%, var(--text-secondary) 68%);
     background: color-mix(in srgb, var(--background-color) 90%, var(--nice-div-color) 10%);
-    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.055);
+    box-shadow: 0 9px 20px rgba(0, 0, 0, 0.045);
   }
 
   .post-row:hover::after,
@@ -555,7 +762,7 @@ const previewPosts = latestPosts.map((post, index) => ({
 
   .post-row-meta {
     color: var(--text-secondary);
-    font-size: 0.84rem;
+    font-size: 0.76rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -563,9 +770,10 @@ const previewPosts = latestPosts.map((post, index) => ({
   .post-row-body h3 {
     position: relative;
     margin-top: 0;
-    margin-bottom: 0.35rem;
-    line-height: 1.35;
-    min-height: calc(1.35em * 2);
+    margin-bottom: 0.24rem;
+    font-size: 0.98rem;
+    line-height: 1.28;
+    min-height: 0;
   }
 
   .post-row-body a {
@@ -577,7 +785,7 @@ const previewPosts = latestPosts.map((post, index) => ({
     transform: none;
     color: var(--text-primary);
     text-decoration: none;
-    line-height: 1.35;
+    line-height: 1.28;
     transition: color 0.22s ease;
   }
 
@@ -624,12 +832,15 @@ const previewPosts = latestPosts.map((post, index) => ({
   .post-row-body {
     display: grid;
     align-content: start;
-    min-height: 100%;
+    gap: 0.18rem;
+    min-height: 0;
+    min-width: 0;
   }
 
   .post-row-body p {
-    min-height: calc(1.55em * 2);
-    line-height: 1.55;
+    min-height: 0;
+    font-size: 0.88rem;
+    line-height: 1.36;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -667,6 +878,10 @@ const previewPosts = latestPosts.map((post, index) => ({
     padding: 0;
     background: color-mix(in srgb, var(--background-color) 95%, var(--nice-div-color) 5%);
     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.09);
+  }
+
+  .preview-stage > * {
+    min-width: 0;
   }
 
   .preview-stage.preview-animating .preview-image,
@@ -762,6 +977,7 @@ const previewPosts = latestPosts.map((post, index) => ({
     .home-sidebar {
       position: static;
       margin-left: 0;
+      max-height: none;
     }
 
     .researcher-card {
@@ -770,10 +986,6 @@ const previewPosts = latestPosts.map((post, index) => ({
     }
 
     .writing-stage {
-      grid-template-columns: 1fr;
-    }
-
-    .publication-paper {
       grid-template-columns: 1fr;
     }
 
@@ -813,6 +1025,12 @@ const previewPosts = latestPosts.map((post, index) => ({
   }
 
   @media (max-width: 560px) {
+    .home-layout {
+      width: auto;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
     .profile-actions,
     .section-header,
     .publication-header {

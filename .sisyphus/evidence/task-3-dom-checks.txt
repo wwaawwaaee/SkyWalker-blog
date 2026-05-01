@@ -1,0 +1,76 @@
+Homepage Publication Density Task 3 DOM Checks
+Date: 2026-05-01
+
+Build:
+- Command: npm run build
+- Evidence file: .sisyphus/evidence/task-3-build.log
+- Result: passed; Astro built 8 pages and completed successfully.
+
+Preview:
+- Preview log: .sisyphus/evidence/task-3-preview.log
+- Actual preview URL used: http://127.0.0.1:4323/
+- Note: ports 4321 and 4322 were already in use, so Astro selected 4323.
+
+Viewport: 1440x900 desktop
+- documentElement.scrollWidth: 1425
+- documentElement.clientWidth: 1425
+- Horizontal overflow: false
+- Publication row count: 1
+- .publication-paper-cover inside .publication-section: false
+- .publication-placeholder inside .publication-section: false
+- .publication-stack inside .publication-section: false
+- Visible unsafe tokens (undefined/null/N/A): false
+- .preview-stage present: true
+- .preview-image present: true
+- .post-row[data-preview-index] count: 3
+- canvas particle background present: true
+- Hover changed preview: true
+- Before preview: 一个在互联网上的锚点 -> /blog/一个在互联网上的锚点
+- After preview: 克制与复杂 -> /blog/克制与复杂
+- Screenshot: .sisyphus/evidence/task-3-home-desktop.png
+
+Viewport: 1024x768 tablet
+- documentElement.scrollWidth: 1009
+- documentElement.clientWidth: 1009
+- Horizontal overflow: false
+- Publication row count: 1
+- .publication-paper-cover inside .publication-section: false
+- .publication-placeholder inside .publication-section: false
+- .publication-stack inside .publication-section: false
+- Visible unsafe tokens (undefined/null/N/A): false
+- .preview-stage present: true
+- .preview-image present: true
+- .post-row[data-preview-index] count: 3
+- canvas particle background present: true
+- Screenshot: .sisyphus/evidence/task-3-home-tablet.png
+
+Viewport: 390x844 mobile
+- documentElement.scrollWidth: 375
+- documentElement.clientWidth: 375
+- body.scrollWidth: 375
+- body.clientWidth: 375
+- Horizontal overflow: false
+- Sidebar rect after fix: top 126, bottom 534.46875, height 408.46875
+- Quote rect after fix: top 558.46875, bottom 630.4791717529297, height 72.01042175292969
+- Sidebar/quote overlap after fix: false
+- `.home-sidebar` computed max-height after fix: none
+- Publication row count: 1
+- .publication-paper-cover inside .publication-section: false
+- .publication-placeholder inside .publication-section: false
+- .publication-stack inside .publication-section: false
+- Visible unsafe tokens (undefined/null/N/A): false
+- .preview-stage present: true
+- .preview-image present: true
+- .post-row[data-preview-index] count: 3
+- canvas particle background present: true
+- Screenshot: .sisyphus/evidence/task-3-home-mobile.png
+
+Mobile visual fix note:
+- Initial mobile screenshot revealed vertical overlap between `.home-sidebar` contact content and `.home-quote-block`.
+- Root cause: desktop `.home-sidebar { max-height: 38vh; }` persisted after the mobile breakpoint made the sidebar `position: static`.
+- Fix applied in `src/pages/index.astro`: `.home-sidebar { max-height: none; }` inside `@media (max-width: 960px)`.
+- Rebuilt successfully after the fix and replaced `.sisyphus/evidence/task-3-home-mobile.png` with the fixed screenshot.
+
+Content-count note:
+- Current repository content has 1 non-draft publication and 1 draft placeholder; therefore homepage Publication row count is expected to be 1 even though implementation supports latest 4.
+- Current repository content has 3 non-draft blog posts; therefore Blog row count is expected to be 3 even though existing code slices latest 4.

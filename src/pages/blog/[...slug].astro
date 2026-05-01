@@ -45,6 +45,40 @@ const { title, description, pubDate } = post.data;
 
   .post-content {
     max-width: 60%;
+    overflow-wrap: anywhere;
+  }
+
+  .post-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--background-color) 92%, var(--nice-div-color) 8%);
+  }
+
+  .post-content :global(p > img:only-child),
+  .post-content :global(figure > img) {
+    display: block;
+    margin: 1.6em auto;
+  }
+
+  .post-content :global(figure) {
+    max-width: 100%;
+    margin: 2em auto;
+    text-align: center;
+  }
+
+  .post-content :global(figure > img) {
+    margin-bottom: 0.75em;
+  }
+
+  .post-content :global(figcaption) {
+    max-width: 90%;
+    margin: 0 auto;
+    color: var(--text-secondary);
+    font-size: 0.88em;
+    line-height: 1.5;
   }
 
   .back-link {

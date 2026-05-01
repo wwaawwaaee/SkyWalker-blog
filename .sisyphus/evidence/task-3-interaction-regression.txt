@@ -1,0 +1,30 @@
+Homepage Publication Density Task 3 Interaction Regression
+Date: 2026-05-01
+
+Desktop interaction check at 1440x900:
+- .preview-stage exists: true
+- .preview-image exists: true
+- .post-row[data-preview-index] count: 3
+- Particle background canvas exists: true
+- Browser console errors: 0
+- Initial preview title: 一个在互联网上的锚点
+- Initial preview href: /blog/一个在互联网上的锚点
+- After hover/focus target row title: 克制与复杂
+- After hover/focus target href: /blog/克制与复杂
+- Preview title changed: true
+- Preview href changed: true
+
+Preserved behavior:
+- Blog hover/focus preview still updates visible preview content and href.
+- Right-side preview stage remains present.
+- Preview image remains present.
+- Particle background remains mounted as a canvas element.
+- No JavaScript console errors were reported by Playwright.
+
+Known environment note:
+- lsp_diagnostics for .astro remains blocked because the configured oxlint LSP server is not installed. Build and browser QA passed.
+
+Mobile overlap regression:
+- Initial Task 3 screenshot caught profile/quote overlap at 390x844.
+- Fixed with `max-height: none` on `.home-sidebar` in the existing `@media (max-width: 960px)` block.
+- Recheck at 390x844 confirmed sidebar/quote overlap: false, horizontal overflow: false, console errors: 0.

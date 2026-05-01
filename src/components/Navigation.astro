@@ -21,7 +21,6 @@ const navItems = [
       <img src="/img/logo.png" alt="" class="brand-mark" aria-hidden="true" />
       <span class="brand-copy">
         <span class="brand-title">SkyWalker</span>
-        <span class="brand-subtitle">随笔与写作</span>
       </span>
     </a>
 
@@ -34,8 +33,24 @@ const navItems = [
     </div>
 
     <button type="button" class="theme-toggle" aria-label="切换主题">
-      <span class="theme-icon sun">☀️</span>
-      <span class="theme-icon moon">🌙</span>
+      <span class="theme-icon sun" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" role="img">
+          <path d="M12 6.9a5.1 5.1 0 1 0 0 10.2 5.1 5.1 0 0 0 0-10.2Z"></path>
+          <path d="M12 1.8c.5 0 .9.4.9.9v1.35a.9.9 0 1 1-1.8 0V2.7c0-.5.4-.9.9-.9Z"></path>
+          <path d="M12 19.05c.5 0 .9.4.9.9v1.35a.9.9 0 1 1-1.8 0v-1.35c0-.5.4-.9.9-.9Z"></path>
+          <path d="M21.3 11.1a.9.9 0 1 1 0 1.8h-1.35a.9.9 0 1 1 0-1.8h1.35Z"></path>
+          <path d="M4.05 11.1a.9.9 0 1 1 0 1.8H2.7a.9.9 0 1 1 0-1.8h1.35Z"></path>
+          <path d="M18.58 4.15a.9.9 0 0 1 1.27 1.27l-.95.95a.9.9 0 0 1-1.27-1.27l.95-.95Z"></path>
+          <path d="M6.37 16.35a.9.9 0 0 1 0 1.27l-.95.95a.9.9 0 0 1-1.27-1.27l.95-.95a.9.9 0 0 1 1.27 0Z"></path>
+          <path d="M19.85 18.58a.9.9 0 0 1-1.27 0l-.95-.95a.9.9 0 0 1 1.27-1.27l.95.95a.9.9 0 0 1 0 1.27Z"></path>
+          <path d="M6.37 5.1a.9.9 0 0 1-1.27 1.27l-.95-.95a.9.9 0 0 1 1.27-1.27l.95.95Z"></path>
+        </svg>
+      </span>
+      <span class="theme-icon moon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" role="img">
+          <path d="M20.6 15.35c.36-.18.75.18.6.56A9.55 9.55 0 0 1 12.28 22C6.84 22 2.5 17.66 2.5 12.22c0-4.08 2.56-7.78 6.36-9.18.38-.14.73.25.55.61a7.6 7.6 0 0 0-.78 3.35 7.8 7.8 0 0 0 7.8 7.8c1.48 0 2.9-.42 4.17-1.2Z"></path>
+        </svg>
+      </span>
     </button>
   </nav>
 </header>
@@ -185,13 +200,14 @@ const navItems = [
   }
 
   .theme-toggle {
-    width: 2.2rem;
-    height: 2.2rem;
-    border-radius: 0.55rem;
+    width: 1.65rem;
+    height: 2rem;
+    border-radius: 0;
     border: none;
     background: transparent;
-    color: var(--text-primary);
-    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1;
     padding: 0;
     display: flex;
     align-items: center;
@@ -201,11 +217,27 @@ const navItems = [
   }
 
   .theme-toggle:hover {
-    background: color-mix(in srgb, var(--nice-div-color) 55%, transparent);
+    background: transparent;
+    color: var(--text-primary);
+    box-shadow: none;
+  }
+
+  .theme-toggle:active {
+    transform: none;
+    box-shadow: none;
   }
 
   .theme-icon {
+    width: 1rem;
+    height: 1rem;
     transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .theme-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: currentColor;
   }
 
   .theme-icon.sun {
@@ -213,11 +245,11 @@ const navItems = [
   }
 
   .theme-icon.moon {
-    display: inline;
+    display: block;
   }
 
   html[data-theme="dark"] .theme-icon.sun {
-    display: inline;
+    display: block;
   }
 
   html[data-theme="dark"] .theme-icon.moon {

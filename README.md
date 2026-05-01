@@ -25,6 +25,19 @@ draft: false
 
 The blog index and static post pages are generated automatically from the content collection.
 
+## Inline Blog Images
+
+Place article images under `public/img/blog/<post-slug>/` and reference them from Markdown with the public path:
+
+```md
+![Descriptive alt text](/img/blog/my-post/image.webp "Visible caption")
+```
+
+- Use clear alt text for accessibility; the optional Markdown title becomes the visible caption below a standalone image.
+- Omit the title when no caption is needed: `![Alt text](/img/blog/my-post/image.webp)`.
+- Prefer `webp` or `jpg`, and keep image dimensions/file sizes reasonable for fast page loads.
+- For complex custom layouts, raw HTML `<figure>` markup can still be used inside a blog post.
+
 ## Cover Image Guidance
 
 To avoid layout breakage from incompatible image sizes, keep cover images close to these aspect ratios:

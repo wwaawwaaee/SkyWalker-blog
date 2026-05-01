@@ -3,6 +3,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
+const SELF_AUTHOR = 'Zheyu Zhang';
+
 const publications = (await getCollection('publication', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
@@ -21,7 +23,16 @@ const publications = (await getCollection('publication', ({ data }) => !data.dra
         <article class="publication-item">
           <div class="publication-body">
             <h2>{item.data.title}</h2>
-            {item.data.authors.length > 0 && <p class="publication-authors">{item.data.authors.join(' · ')}</p>}
+            {item.data.authors.length > 0 && (
+              <p class="publication-authors">
+                {item.data.authors.map((author, authorIndex) => (
+                  <>
+                    <span class:list={['publication-author', { 'is-self': author === SELF_AUTHOR }]}>{author}</span>
+                    {authorIndex < item.data.authors.length - 1 && <span class="publication-author-separator" aria-hidden="true"> · </span>}
+                  </>
+                ))}
+              </p>
+            )}
             {item.data.affiliation && <p class="publication-affiliation">{item.data.affiliation}</p>}
             {item.data.venue && <p class="publication-venue"><em>{item.data.venue}</em>{item.data.venueDetail ? ` · ${item.data.venueDetail}` : ''}</p>}
             <p class="publication-description">{item.data.description}</p>
@@ -77,6 +88,31 @@ const publications = (await getCollection('publication', ({ data }) => !data.dra
     margin-bottom: 0.28rem;
   }
 
+  .publication-author {
+    position: relative;
+    display: inline-block;
+  }
+
+  .publication-author.is-self {
+    color: var(--text-primary);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .publication-author.is-self::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.08rem;
+    height: 1px;
+    background: color-mix(in srgb, var(--text-primary) 78%, transparent);
+  }
+
+  .publication-author-separator {
+    color: color-mix(in srgb, var(--text-secondary) 84%, transparent);
+  }
+
   .publication-actions {
     display: flex;
     flex-wrap: wrap;
@@ -86,6 +122,51 @@ const publications = (await getCollection('publication', ({ data }) => !data.dra
 
   .publication-back-link {
     margin-top: 0.2rem;
+  }
+
+  .publication-actions a,
+  .publication-back-link a {
+    position: relative;
+    display: inline-block;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transform: none;
+    transition: color 0.22s ease;
+  }
+
+  .publication-actions a::after,
+  .publication-back-link a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.08rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.22s ease;
+  }
+
+  .publication-actions a:hover,
+  .publication-actions a:active,
+  .publication-back-link a:hover,
+  .publication-back-link a:active {
+    background: none;
+    box-shadow: none;
+    color: var(--text-primary);
+    transform: none;
+  }
+
+  .publication-actions a:hover::after,
+  .publication-actions a:active::after,
+  .publication-back-link a:hover::after,
+  .publication-back-link a:active::after {
+    transform: scaleX(1);
   }
 
   @media (max-width: 960px) {
