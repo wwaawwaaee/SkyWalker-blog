@@ -33,8 +33,17 @@ $$\text{generalization} = f(\text{architecture}, \text{data}, \text{optimization
 
 在我求学乃至人生的路上，有许许多多的人陪我一路前行，这让我无比感恩：
 - 我的父母
-- 那些给了我引导的研究者们：[Jiaxu Ren](https://scholar.google.com/citations?user=jIpleuQAAAAJ&hl=en) | [Jiaxuan Zou](https://jiaxuanzou0714.github.io) | [Huanran Chen](https://huanranchen.github.io/) | [Zhao Chenyang](https://zhaochenyang20.github.io/Chayenne/)
-- 非常棒的好朋友们：[Ray](https://blog.mk1.io/) | [CloverIris](https://bili.cloveriris.com) | [Dongdigua](https://blog.dongdigua.ooo)
+
+- 那些给了我引导的研究者们：
+    - [Jiaxu Ren](https://scholar.google.com/citations?user=jIpleuQAAAAJ&hl=en) | 启发我taste的MIT学长
+    - [Jiaxuan Zou](https://jiaxuanzou0714.github.io) | 西交数学系我只认嘉轩
+    - [Huanran Chen](https://huanranchen.github.io/) | 精神榜样，向焕然学长学习
+
+- 非常棒的好朋友们：
+    - [Ray](https://blog.mk1.io/) | 权威的Vue team前端大手子
+    - [CloverIris](https://bili.cloveriris.com) | 存在，探索，成为自己
+    - [锦恢](https://kirigaya.cn/home) | 锦恢就像是一团生命的火焰
+    - [Dongdigua](https://blog.dongdigua.ooo) | 
 
 ## 关于这个网站
 
