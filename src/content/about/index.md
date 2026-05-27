@@ -35,14 +35,14 @@ $$\text{generalization} = f(\text{architecture}, \text{data}, \text{optimization
 - 我的父母
 
 - 那些给了我引导的研究者们：
-    - [Jiaxu Ren](https://scholar.google.com/citations?user=jIpleuQAAAAJ&hl=en) | 启发我taste的MIT学长
-    - [Jiaxuan Zou](https://jiaxuanzou0714.github.io) | 西交数学系我只认嘉轩
-    - [Huanran Chen](https://huanranchen.github.io/) | 精神榜样，向焕然学长学习
+    - [Jiaxu Ren](https://scholar.google.com/citations?user=jIpleuQAAAAJ&hl=en) | 智能涌现应具备真正的几何直觉
+    - [Jiaxuan Zou](https://jiaxuanzou0714.github.io) | 重要的不是SOTA，而是解决了什么问题
+    - [Huanran Chen](https://huanranchen.github.io/) | 将AI提升到科学的范畴，所有现象都应可解释、可预测
 
 - 非常棒的好朋友们：
     - [Ray](https://blog.mk1.io/) | 权威的Vue team前端大手子
     - [CloverIris](https://bili.cloveriris.com) | 存在，探索，成为自己
-    - [锦恢](https://kirigaya.cn/home) | 锦恢就像是一团生命的火焰
+    - [锦恢](https://kirigaya.cn/home) | 直面恐惧，创造未来
     - [Dongdigua](https://blog.dongdigua.ooo) | 
 
 ## 关于这个网站
