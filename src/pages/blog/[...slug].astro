@@ -14,8 +14,9 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 
-const { Content } = await post.render();
-const { title, description, pubDate } = post.data;
+const { Content, headings } = await post.render();
+const tocHeadings = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const { title, description, pubDate, labels } = post.data;
 ---
 
 <BaseLayout
@@ -23,35 +24,206 @@ const { title, description, pubDate } = post.data;
   description={description}
   currentPath="/blog"
 >
-  <div class="container">
-    <article>
-      <h1>{title}</h1>
-      <p class="post-meta">{pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-      <div class="post-content">
-        <Content />
-      </div>
-    </article>
+  <div class="container article-layout">
+    <div class:list={['article-grid', { 'has-toc': tocHeadings.length > 0 }]}>
+      {tocHeadings.length > 0 && (
+        <aside class="toc-card" aria-label="文章目录">
+          <span class="section-kicker">目录</span>
+          <nav class="toc-nav">
+            {tocHeadings.map((heading) => (
+              <a class:list={['toc-link', `depth-${heading.depth}`]} href={`#${heading.slug}`}>{heading.text}</a>
+            ))}
+          </nav>
+        </aside>
+      )}
 
-    <p class="back-link"><a href="/blog">← 返回文章列表</a></p>
+      <article class="article-shell content-card">
+        <h1>{title}</h1>
+        <div class="post-meta-block">
+          <p class="post-meta">{pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          {labels.length > 0 && (
+            <div class="label-list" aria-label="文章标签">
+              {labels.map((label) => <span class="label-pill">{label}</span>)}
+            </div>
+          )}
+        </div>
+        <div class="post-content">
+          <Content />
+        </div>
+
+        <p class="back-link"><a href="/blog">← 返回文章列表</a></p>
+      </article>
+    </div>
   </div>
 </BaseLayout>
 
 <style>
+  .article-layout {
+    width: min(1440px, calc(100vw - 32px));
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 820px);
+    justify-content: center;
+    align-items: start;
+  }
+
+  .article-grid.has-toc {
+    grid-template-columns: minmax(170px, 240px) minmax(0, 780px) minmax(120px, 1fr);
+    gap: 1.6rem;
+    justify-content: stretch;
+  }
+
+  .toc-card {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+    max-height: calc(100vh - 7rem);
+    overflow: auto;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--background-color) 92%, var(--nice-div-color) 8%);
+    box-shadow: 0 10px 24px rgba(20, 20, 20, 0.035);
+  }
+
+  .toc-card .section-kicker {
+    margin-bottom: 0.48rem;
+  }
+
+  .toc-nav {
+    display: grid;
+    gap: 0.18rem;
+  }
+
+  .toc-link {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.18rem 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    line-height: 1.35;
+    text-decoration: none;
+    transform: none;
+    transition: color 0.2s ease;
+  }
+
+  .toc-link.depth-3 {
+    padding-left: 0.82rem;
+    font-size: 0.78rem;
+  }
+
+  .toc-link:hover,
+  .toc-link:active {
+    background: none;
+    box-shadow: none;
+    color: var(--text-primary);
+    transform: none;
+  }
+
+  .article-shell {
+    min-width: 0;
+    grid-column: 1;
+  }
+
+  .article-grid.has-toc .article-shell {
+    grid-column: 2;
+  }
+
+  .article-shell h1 {
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+  }
+
+  .post-meta-block {
+    display: grid;
+    gap: 0.45rem;
+    margin-bottom: 1.8em;
+  }
+
   .post-meta {
     color: var(--text-secondary);
     font-size: 0.9em;
-    margin-bottom: 2em;
+    margin-bottom: 0;
+  }
+
+  .label-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .label-pill {
+    max-width: 7rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.08rem 0.42rem;
+    border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--nice-div-color) 74%, transparent);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
   }
 
   .post-content {
-    max-width: 60%;
+    max-width: 100%;
+    min-width: 0;
     overflow-wrap: anywhere;
   }
 
-  .post-content :global(img) {
+  .post-content :global(.katex-display) {
+    display: block;
     max-width: 100%;
-    height: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block: 0.12em;
+    text-align: center;
+  }
+
+  .post-content :global(.katex) {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
     vertical-align: middle;
+  }
+
+  .post-content :global(.katex-display > .katex) {
+    text-align: initial;
+  }
+
+  .post-content :global(.katex-html) {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .post-content :global(.katex-html .base) {
+    max-width: 100%;
+  }
+
+  .post-content :global(img) {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(100%, 30vw);
+    max-height: 30vh;
+    object-fit: contain;
+    margin: 1.4em auto;
     border: 1px solid var(--border-color);
     border-radius: 18px;
     background: color-mix(in srgb, var(--background-color) 92%, var(--nice-div-color) 8%);
@@ -82,14 +254,30 @@ const { title, description, pubDate } = post.data;
   }
 
   .back-link {
-    max-width: 60%;
     margin-top: 3em;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 960px) {
+    .article-grid,
+    .article-grid.has-toc {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .article-grid.has-toc .article-shell {
+      grid-column: auto;
+    }
+
+    .toc-card {
+      display: none;
+    }
   }
 
   @media (max-width: 768px) {
-    .post-content,
-    .back-link {
+    .post-content :global(img) {
       max-width: 100%;
+      max-height: 62vh;
     }
   }
 </style>

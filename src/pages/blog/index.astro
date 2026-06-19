@@ -35,6 +35,7 @@ const previewPosts = posts.map((post, index) => ({
   dateLabel: post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }),
   excerpt: truncateText(stripMarkdown(post.body), 90),
   cover: post.data.cover ?? '',
+  labels: post.data.labels,
 }));
 ---
 
@@ -47,37 +48,51 @@ const previewPosts = posts.map((post, index) => ({
     </section>
 
     <section class="archive-stage content-card" data-preview-posts={JSON.stringify(previewPosts)}>
-      <div class="archive-stage-grid">
-        <div class="posts-list" role="list">
-          {previewPosts.map((post) => (
-            <article class:list={['post-item', 'interactive-surface', { active: post.index === 0 }]} data-preview-index={post.index}>
-              <span class="post-date">{post.dateLabel}</span>
-              <div>
-                <a href={`/blog/${post.slug}`} class="post-title">{post.title}</a>
-                <p class="post-description">{post.description}</p>
+      {previewPosts.length === 0 ? (
+        <p class="posts-empty">现在还没有可以展示的文章。</p>
+      ) : (
+        <div class="archive-stage-grid">
+          <div class="posts-list" role="list">
+            {previewPosts.map((post) => (
+              <article class:list={['post-item', 'interactive-surface', { active: post.index === 0 }]} data-preview-index={post.index}>
+                <div class="post-meta-stack">
+                  <span class="post-date">{post.dateLabel}</span>
+                  {post.labels.length > 0 && (
+                    <div class="label-list post-labels" aria-label="文章标签">
+                      {post.labels.map((label) => <span class="label-pill">{label}</span>)}
+                    </div>
+                  )}
+                </div>
+                <div class="post-copy">
+                  <a href={`/blog/${post.slug}`} class="post-title">{post.title}</a>
+                  <p class="post-description">{post.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div class="preview-stage-wrap">
+            <div class="preview-ghost preview-ghost-top" aria-hidden="true"></div>
+
+            <a class="preview-stage interactive-surface" href={`/blog/${previewPosts[0].slug}`}>
+              <div class="preview-cover">
+                <img src={previewPosts[0].cover} alt="" class="preview-image" />
               </div>
-            </article>
-          ))}
+              <div class="preview-content">
+                <span class="section-kicker">封面预览</span>
+                <p class="preview-date">{previewPosts[0].dateLabel}</p>
+                <h2 class="preview-title">{previewPosts[0].title}</h2>
+                <div class="label-list preview-labels" aria-label="文章标签">
+                  {previewPosts[0].labels.map((label) => <span class="label-pill">{label}</span>)}
+                </div>
+                <p class="preview-excerpt">{previewPosts[0].excerpt}</p>
+              </div>
+            </a>
+
+            <div class="preview-ghost preview-ghost-bottom" aria-hidden="true"></div>
+          </div>
         </div>
-
-        <div class="preview-stage-wrap">
-          <div class="preview-ghost preview-ghost-top" aria-hidden="true"></div>
-
-          <a class="preview-stage interactive-surface" href={`/blog/${previewPosts[0].slug}`}>
-            <div class="preview-cover">
-              <img src={previewPosts[0].cover} alt="" class="preview-image" />
-            </div>
-            <div class="preview-content">
-              <span class="section-kicker">封面预览</span>
-              <p class="preview-date">{previewPosts[0].dateLabel}</p>
-              <h2 class="preview-title">{previewPosts[0].title}</h2>
-              <p class="preview-excerpt">{previewPosts[0].excerpt}</p>
-            </div>
-          </a>
-
-          <div class="preview-ghost preview-ghost-bottom" aria-hidden="true"></div>
-        </div>
-      </div>
+      )}
     </section>
 
     <p class="archive-back-link"><a href="/">← 返回首页</a></p>
@@ -101,6 +116,7 @@ const previewPosts = posts.map((post, index) => ({
     var date = section.querySelector('.preview-date');
     var title = section.querySelector('.preview-title');
     var excerpt = section.querySelector('.preview-excerpt');
+    var labels = section.querySelector('.preview-labels');
     var topGhost = section.querySelector('.preview-ghost-top');
     var bottomGhost = section.querySelector('.preview-ghost-bottom');
 
@@ -121,6 +137,15 @@ const previewPosts = posts.map((post, index) => ({
       date.textContent = post.dateLabel;
       title.textContent = post.title;
       excerpt.textContent = post.excerpt;
+      if (labels) {
+        labels.replaceChildren();
+        (post.labels || []).forEach(function (label) {
+          var pill = document.createElement('span');
+          pill.className = 'label-pill';
+          pill.textContent = label;
+          labels.appendChild(pill);
+        });
+      }
 
       rows.forEach(function (row, rowIndex) {
         row.classList.toggle('active', rowIndex === index);
@@ -166,28 +191,57 @@ const previewPosts = posts.map((post, index) => ({
 
   .archive-stage-grid {
     display: grid;
-    grid-template-columns: minmax(420px, 0.95fr) minmax(520px, 1.2fr);
-    gap: 1.15rem;
+    grid-template-columns: minmax(520px, 1.35fr) minmax(300px, 0.65fr);
+    gap: 0.95rem;
     align-items: stretch;
+  }
+
+  .posts-empty {
+    margin-bottom: 0;
+    color: var(--text-secondary);
+  }
+
+  .label-list {
+    display: flex;
+    align-items: center;
+    gap: 0.26rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .label-pill {
+    flex: 0 0 auto;
+    max-width: 6.2rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.06rem 0.34rem;
+    border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--nice-div-color) 74%, transparent);
+    color: var(--text-secondary);
+    font-size: 0.66rem;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
   }
 
   .posts-list {
     display: grid;
-    gap: 0.9rem;
+    gap: 0.48rem;
     margin-left: -0.9rem;
   }
 
   .post-item {
     display: grid;
-    grid-template-columns: 140px minmax(0, 1fr);
-    gap: 1em;
-    align-items: flex-start;
+    grid-template-columns: 116px minmax(0, 1fr);
+    gap: 0.72rem;
+    align-items: center;
     position: relative;
     overflow: hidden;
-    min-height: 118px;
-    padding: 1rem 1.05rem;
+    min-height: 76px;
+    padding: 0.56rem 0.72rem;
     border: 1px solid var(--border-color);
-    border-radius: 18px;
+    border-radius: 15px;
     background: color-mix(in srgb, var(--background-color) 96%, var(--nice-div-color) 4%);
     transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   }
@@ -224,36 +278,45 @@ const previewPosts = posts.map((post, index) => ({
     opacity: 1;
   }
 
-  .post-item > div {
+  .post-meta-stack,
+  .post-copy {
     display: grid;
     align-content: start;
     min-width: 0;
-    min-height: 100%;
-    grid-template-rows: minmax(calc(1.35em * 2), auto) minmax(calc(1.55em * 2), auto);
+    overflow: hidden;
   }
 
   .post-date {
     color: var(--text-secondary);
-    font-size: 0.9em;
-    width: 140px;
+    font-size: 0.78em;
+    width: 116px;
     flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .post-labels {
+    margin-top: 0.28rem;
+  }
+
+  .post-copy {
+    gap: 0.12rem;
   }
 
   .post-title {
     position: relative;
     display: block;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     background: none;
     padding: 0;
     color: var(--text-primary);
     box-shadow: none;
     transform: none;
     text-decoration: none;
-    line-height: 1.35;
+    line-height: 1.3;
     transition: color 0.22s ease;
-  }
-
-  .post-item > div .post-title {
-    min-height: calc(1.35em * 2);
   }
 
   .post-title::after {
@@ -292,14 +355,14 @@ const previewPosts = posts.map((post, index) => ({
   }
 
   .post-description {
-    margin-top: 0.35rem;
+    margin-top: 0;
     margin-bottom: 0;
     color: var(--text-secondary);
-    font-size: 0.95em;
-    min-height: calc(1.55em * 2);
-    line-height: 1.55;
+    font-size: 0.86em;
+    min-height: 0;
+    line-height: 1.42;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -323,8 +386,8 @@ const previewPosts = posts.map((post, index) => ({
     position: sticky;
     top: 6rem;
     align-self: start;
-    min-height: 640px;
-    padding-block: 4.2rem;
+    min-height: 420px;
+    padding-block: 2.1rem;
   }
 
   .archive-back-link {
@@ -335,13 +398,13 @@ const previewPosts = posts.map((post, index) => ({
   .preview-stage {
     position: relative;
     display: grid;
-    grid-template-rows: minmax(380px, 1fr) auto;
+    grid-template-rows: 220px auto;
     min-height: 100%;
     overflow: hidden;
-    border-radius: 28px;
+    border-radius: 20px;
     padding: 0;
     background: color-mix(in srgb, var(--background-color) 95%, var(--nice-div-color) 5%);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.11);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.09);
   }
 
   .preview-stage.preview-animating .preview-image,
@@ -362,43 +425,54 @@ const previewPosts = posts.map((post, index) => ({
   }
 
   .preview-content {
-    padding: 1.35rem 1.35rem 1.45rem;
+    padding: 0.9rem 0.95rem 1rem;
   }
 
   .preview-date {
     margin-top: 0;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.28rem;
     color: var(--text-secondary);
-    font-size: 0.88rem;
+    font-size: 0.78rem;
   }
 
   .preview-title {
     margin-top: 0;
-    margin-bottom: 0.65rem;
-    font-size: clamp(1.55rem, 2.2vw, 2.25rem);
-    line-height: 1.1;
+    margin-bottom: 0.36rem;
+    font-size: clamp(1.02rem, 1.35vw, 1.28rem);
+    line-height: 1.18;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .preview-labels {
+    margin-bottom: 0.44rem;
   }
 
   .preview-excerpt {
     margin-bottom: 0;
-    max-width: 28rem;
+    max-width: 19rem;
     color: var(--text-secondary);
-    font-size: 1rem;
-    line-height: 1.75;
+    font-size: 0.84rem;
+    line-height: 1.56;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .preview-ghost {
     position: absolute;
     right: 0;
-    width: 68%;
-    height: 148px;
-    border-radius: 24px;
+    width: 74%;
+    height: 82px;
+    border-radius: 16px;
     background-color: color-mix(in srgb, var(--nice-div-color) 90%, transparent);
     background-position: center;
     background-size: cover;
     filter: grayscale(1) saturate(0) brightness(0.86);
     opacity: 0.68;
-    transform: scale(0.88);
+    transform: scale(0.82);
     transition: background-image 0.55s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
   }
@@ -412,11 +486,11 @@ const previewPosts = posts.map((post, index) => ({
   }
 
   .preview-ghost-top {
-    top: 0;
+    top: 0.15rem;
   }
 
   .preview-ghost-bottom {
-    bottom: 0;
+    bottom: 0.15rem;
   }
 
   @keyframes previewFade {
@@ -461,12 +535,12 @@ const previewPosts = posts.map((post, index) => ({
       gap: 0.2em;
     }
 
-    .post-item > div .post-title,
+    .post-copy .post-title,
     .post-description {
       min-height: 0;
     }
 
-    .post-item > div {
+    .post-copy {
       grid-template-rows: auto auto;
     }
 
