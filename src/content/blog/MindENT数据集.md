@@ -3,7 +3,7 @@ title: MindENT数据集
 description: MindENT门诊心理对话数据集：构建临床对话与结构化病历的关联表征
 pubDate: 2026-05-03
 cover: /img/blog/MindENT/fantasy-world-v0-k3lpbeafqrfb1.webp
-labels: [数据集, 医疗AI]
+labels: [项目]
 ---
 
 在医学与计算语言学的交叉研究领域，高质量的临床对话数据始终是稀缺资源。为了推动针对门诊患者心理量化特征的识别研究，笔者最近的项目 **Mind-Echo（数智心晴）** 现正式公开发布**MindENT**门诊心理对话数据集。该数据集旨在通过融合医患对话、标准化心理量表评估与结构化病历信息，为人工智能驱动的焦虑抑郁识别提供多维度的标注基准。
