@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1740" viewBox="0 0 1600 1740" role="img" aria-labelledby="title desc">
+  <title id="title">Fig. 1: MindENT-ZZHL-25 outpatient communication research workflow.</title>
+  <desc id="desc">CONSORT-style clinical research flow diagram for the MindENT-ZZHL-25 outpatient communication workflow, showing data construction, early caregiver dialogue windows, language and voice feature extraction, patient-level validation, multimodal modelling, evaluation, and doctor-facing communication support rather than psychological diagnosis.</desc>
+  <defs>
+    <marker id="arrow-black" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M1,1 L9,4 L1,7 Z" fill="#000000" />
+    </marker>
+    <style>
+      svg { background: #ffffff; }
+      text { font-family: "Aptos", "Segoe UI", "Helvetica Neue", sans-serif; fill: #000000; }
+      .page { fill: #ffffff; }
+      .title { font-size: 34px; font-weight: 700; }
+      .source { font-size: 18px; }
+      .tab { fill: #000000; stroke: #000000; stroke-width: 1.5; }
+      .tab-text { fill: #ffffff; font-size: 22px; font-weight: 700; }
+      .stage-blue { fill: #3d78a8; stroke: #000000; stroke-width: 1.5; }
+      .stage-green { fill: #5c9a69; stroke: #000000; stroke-width: 1.5; }
+      .stage-text-en { fill: #ffffff; font-size: 23px; font-weight: 700; letter-spacing: 0.4px; }
+      .block-blue { fill: #78add0; stroke: #000000; stroke-width: 1.8; }
+      .block-green { fill: #79b987; stroke: #000000; stroke-width: 1.8; }
+      .inner-blue { fill: #d9edf9; stroke: #000000; stroke-width: 1.4; }
+      .inner-green { fill: #dff1df; stroke: #000000; stroke-width: 1.4; }
+      .note-box { fill: #ffffff; stroke: #000000; stroke-width: 1.5; }
+      .block-title { font-size: 25px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .body-strong { font-size: 21px; font-weight: 700; }
+      .small { font-size: 18px; }
+      .callout-title { font-size: 21px; font-weight: 700; }
+      .arrow { fill: none; stroke: #000000; stroke-width: 3.8; stroke-linecap: square; marker-end: url(#arrow-black); }
+      .side-arrow { fill: none; stroke: #000000; stroke-width: 3.2; stroke-linecap: square; marker-end: url(#arrow-black); }
+      .thin-line { fill: none; stroke: #000000; stroke-width: 1.3; }
+      .caption { font-size: 19px; }
+    </style>
+  </defs>
+
+  <rect class="page" x="0" y="0" width="1600" height="1740" />
+
+  <text class="title" x="70" y="54" text-anchor="start">Fig. 1: MindENT-ZZHL-25 outpatient communication research workflow.</text>
+  <text class="source" x="70" y="86" text-anchor="start">Source: MindENT-ZZHL-25 outpatient communication study protocol; workflow adapted to a clinical-trial flow diagram style.</text>
+
+  <rect class="tab" x="70" y="118" width="220" height="48" />
+  <text class="tab-text" x="180" y="149" text-anchor="middle">Setting / Stage</text>
+  <rect class="tab" x="350" y="118" width="640" height="48" />
+  <text class="tab-text" x="670" y="149" text-anchor="middle">Research flow</text>
+  <rect class="tab" x="1085" y="118" width="365" height="48" />
+  <text class="tab-text" x="1268" y="149" text-anchor="middle">Annotations</text>
+
+  <rect class="stage-blue" x="70" y="188" width="220" height="298" />
+  <text class="stage-text-en" x="180" y="337" text-anchor="middle" transform="rotate(-90 180 337)">Outpatient data</text>
+  <rect class="stage-blue" x="70" y="532" width="220" height="244" />
+  <text class="stage-text-en" x="180" y="654" text-anchor="middle" transform="rotate(-90 180 654)">Feature engineering</text>
+  <rect class="stage-green" x="70" y="824" width="220" height="636" />
+  <text class="stage-text-en" x="180" y="1142" text-anchor="middle" transform="rotate(-90 180 1142)">Validation and modelling</text>
+  <rect class="stage-green" x="70" y="1490" width="220" height="130" />
+  <text class="stage-text-en" x="180" y="1555" text-anchor="middle" transform="rotate(-90 180 1555)">Clinical use</text>
+
+  <g id="central-flow">
+    <rect class="block-blue" x="350" y="188" width="640" height="132" />
+    <text class="block-title" x="670" y="226" text-anchor="middle">Outpatient data construction</text>
+    <text class="body" x="390" y="262" text-anchor="start">MindENT-ZZHL-25</text>
+    <text class="body" x="390" y="292" text-anchor="start">84 patients / 131 visits / 5531 dialogue turns</text>
+
+    <path class="arrow" d="M670,326 L670,348" />
+
+    <rect class="block-blue" x="350" y="360" width="640" height="126" />
+    <text class="block-title" x="670" y="400" text-anchor="middle">Early caregiver dialogue windows</text>
+    <text class="body" x="670" y="438" text-anchor="middle">First 4/6/8/10/12/15 caregiver dialogue turns</text>
+    <text class="small" x="670" y="466" text-anchor="middle">Used to compare how early windows contribute to risk alerts</text>
+
+    <path class="arrow" d="M670,492 L670,520" />
+
+    <rect class="block-blue" x="350" y="532" width="640" height="244" />
+    <text class="block-title" x="670" y="570" text-anchor="middle">Feature extraction</text>
+    <rect class="inner-blue" x="380" y="594" width="290" height="166" />
+    <text class="body-strong" x="525" y="624" text-anchor="middle">Language features</text>
+    <text class="body" x="405" y="653" text-anchor="start">TF-IDF + SVD; LIWC</text>
+    <text class="body" x="405" y="681" text-anchor="start">Domain-rule features</text>
+    <text class="small" x="405" y="708" text-anchor="start">Risk confirmation / absolutist</text>
+    <text class="small" x="405" y="731" text-anchor="start">expressions / symptom amplification</text>
+    <text class="small" x="405" y="754" text-anchor="start">Repeated questioning</text>
+    <rect class="inner-blue" x="690" y="594" width="270" height="166" />
+    <text class="body-strong" x="825" y="624" text-anchor="middle">Voice features</text>
+    <text class="body" x="715" y="653" text-anchor="start">Acoustic and paralinguistic</text>
+    <text class="body" x="715" y="681" text-anchor="start">voice features</text>
+    <text class="body" x="715" y="709" text-anchor="start">Prosody / pitch variance</text>
+    <text class="body" x="715" y="737" text-anchor="start">Long pauses</text>
+
+    <path class="arrow" d="M670,782 L670,812" />
+
+    <rect class="block-green" x="350" y="824" width="640" height="120" />
+    <text class="block-title" x="670" y="864" text-anchor="middle">Correlation analysis and feature selection</text>
+    <text class="body" x="670" y="902" text-anchor="middle">Window sensitivity, interpretable feature retention, redundancy removal</text>
+    <text class="small" x="670" y="928" text-anchor="middle">Keep feature sets with explanatory value for doctor-facing support</text>
+
+    <path class="arrow" d="M670,950 L670,980" />
+
+    <rect class="block-green" x="350" y="992" width="640" height="138" />
+    <text class="block-title" x="670" y="1032" text-anchor="middle">Patient-level 5-fold cross-validation</text>
+    <rect class="inner-green" x="380" y="1060" width="580" height="44" />
+    <text class="body" x="670" y="1089" text-anchor="middle">ACC / F1 / Recall / Specificity / Balanced ACC</text>
+
+    <path class="arrow" d="M670,1136 L670,1166" />
+
+    <rect class="block-green" x="350" y="1178" width="640" height="114" />
+    <text class="block-title" x="670" y="1218" text-anchor="middle">Feature iteration</text>
+    <text class="body" x="670" y="1254" text-anchor="middle">Validation results refine feature sets, window lengths, and rule items</text>
+
+    <path class="arrow" d="M670,1298 L670,1328" />
+
+    <rect class="block-green" x="350" y="1340" width="640" height="120" />
+    <text class="block-title" x="670" y="1380" text-anchor="middle">Multimodal model training</text>
+    <text class="body" x="670" y="1416" text-anchor="middle">Traditional model + LLM review; language + voice fusion</text>
+
+    <path class="arrow" d="M670,1466 L670,1490" />
+
+    <rect class="block-green" x="350" y="1502" width="640" height="118" />
+    <text class="block-title" x="670" y="1542" text-anchor="middle">Evaluation and doctor-facing application</text>
+    <text class="body" x="670" y="1578" text-anchor="middle">Doctor-facing communication warning/support; not psychological diagnosis</text>
+  </g>
+
+  <g id="right-annotations">
+    <path class="side-arrow" d="M1000,254 L1068,254" />
+    <rect class="note-box" x="1085" y="198" width="365" height="126" />
+    <text class="callout-title" x="1110" y="235" text-anchor="start">Interpretable small-sample flow</text>
+    <text class="body" x="1110" y="270" text-anchor="start">Real outpatient communication data</text>
+    <text class="body" x="1110" y="298" text-anchor="start">are structured before modelling.</text>
+
+    <path class="side-arrow" d="M1000,1062 L1068,1062" />
+    <rect class="note-box" x="1085" y="990" width="365" height="150" />
+    <text class="callout-title" x="1110" y="1028" text-anchor="start">Patient-level splits prevent leakage</text>
+    <text class="body" x="1110" y="1064" text-anchor="start">Multiple visits and turns from the</text>
+    <text class="body" x="1110" y="1092" text-anchor="start">same patient are not mixed across</text>
+    <text class="body" x="1110" y="1120" text-anchor="start">training and validation folds.</text>
+
+    <path class="side-arrow" d="M1000,1561 L1068,1561" />
+    <rect class="note-box" x="1085" y="1490" width="365" height="130" />
+    <text class="callout-title" x="1110" y="1528" text-anchor="start">Support, not diagnosis</text>
+    <text class="body" x="1110" y="1564" text-anchor="start">The output supports doctor-patient</text>
+    <text class="body" x="1110" y="1592" text-anchor="start">communication and is not a diagnosis.</text>
+  </g>
+
+  <g id="bottom-note">
+    <line class="thin-line" x1="70" y1="1678" x2="1450" y2="1678" />
+    <text class="caption" x="70" y="1710" text-anchor="start">Note: This diagram describes an outpatient communication-support research workflow and does not imply diagnostic, therapeutic, or psychological-diagnostic claims.</text>
+  </g>
+</svg>

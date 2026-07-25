@@ -3,7 +3,7 @@ title: 神经网络Identifiability问题
 description: “深度学习模型可识别性”可以分成三条主线：一是神经网络参数是否能由其实现的函数唯一恢复；二是深度生成模型、表示学习、解缠表示中的潜变量是否可识别；三是用代数几何、张量分解、非线性独立成分分析等工具给出可识别性条件。下面是整理后的检索结果与阅读路线。
 pubDate: 2026-06-01
 cover: /img/blog/_2025-07-20_231319_325.jpg
-labels: [研究]
+labels: [research]
 ---
 
 Identifiability is what it means to learn the right latent space
