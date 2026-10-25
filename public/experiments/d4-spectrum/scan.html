@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>谱填充与 sigmoid 误差</title>
+<script src="plotly.min.js"></script>
+<style>
+body{margin:0;font-family:"Inter","Microsoft YaHei",system-ui,sans-serif;color:#1f2937;background:#fff;padding:14px}
+#scan{height:380px}#weight{height:280px}.note{font-size:12px;color:#6b7280}
+</style></head><body>
+<div id="scan"></div>
+<div id="weight"></div>
+<div class="note">左边：固定谱跨度 100，均匀权重，k 从 2 增加到 32。右边：固定 k=8，改变权重分布。虚线是注册阈值。</div>
+<script src="data.js"></script>
+<script>
+const D=window.D4_SPECTRUM, T=D.thresholds, conds=D.conditions;
+const uniform=conds.filter(c=>c.kind==='uniform').sort((a,b)=>a.k-b.k);
+const weight=conds.filter(c=>c.k===8).sort((a,b)=>a.kind.localeCompare(b.kind));
+Plotly.newPlot('scan',[
+  {x:uniform.map(c=>c.k),y:uniform.map(c=>c.rmse),name:'RMSE',mode:'lines+markers',line:{color:'#1677b8',width:2},marker:{size:8}},
+  {x:uniform.map(c=>c.k),y:uniform.map(c=>c.maxabs),name:'maxabs',mode:'lines+markers',line:{color:'#ce4b49',width:2},marker:{size:8}},
+  {x:[2,32],y:[T.rmse,T.rmse],name:'RMSE 阈值',mode:'lines',line:{color:'#1677b8',dash:'dash',width:1.2}},
+  {x:[2,32],y:[T.maxabs,T.maxabs],name:'maxabs 阈值',mode:'lines',line:{color:'#ce4b49',dash:'dash',width:1.2}}
+],{margin:{l:64,r:20,t:12,b:44},xaxis:{title:'模态数 k（谱跨度固定 100）',type:'linear',tickvals:[2,4,8,16,32],ticktext:['2','4','8','16','32']},
+  yaxis:{title:'误差',range:[0,.1]},legend:{orientation:'h',y:1.12},plot_bgcolor:'#fff',paper_bgcolor:'#fff'},
+  {displayModeBar:false,responsive:true});
+const order=['uniform','proportional to lambda','proportional to 1/lambda'];
+weight.sort((a,b)=>order.indexOf(a.kind)-order.indexOf(b.kind));
+const labels=weight.map(c=>c.kind==='uniform'?'均匀':(c.kind==='proportional to lambda'?'偏向快模态':'偏向慢模态'));
+Plotly.newPlot('weight',[
+  {x:labels,y:weight.map(c=>c.rmse),name:'RMSE',type:'bar',marker:{color:'#1677b8'}},
+  {x:labels,y:weight.map(c=>c.maxabs),name:'maxabs',type:'bar',marker:{color:'#ce4b49'}},
+  {x:labels,y:weight.map(()=>T.rmse),name:'RMSE 阈值',mode:'lines',line:{color:'#1677b8',dash:'dash'}},
+  {x:labels,y:weight.map(()=>T.maxabs),name:'maxabs 阈值',mode:'lines',line:{color:'#ce4b49',dash:'dash'}}
+],{margin:{l:64,r:20,t:12,b:44},yaxis:{title:'误差',range:[0,.06]},barmode:'group',
+  legend:{orientation:'h',y:1.12},plot_bgcolor:'#fff',paper_bgcolor:'#fff'},{displayModeBar:false,responsive:true});
+</script></body></html>

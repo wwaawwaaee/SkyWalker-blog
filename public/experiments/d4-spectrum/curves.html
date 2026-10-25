@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hessian 谱与训练曲线</title>
+<script src="plotly.min.js"></script>
+<style>
+body{margin:0;font-family:"Inter","Microsoft YaHei",system-ui,sans-serif;color:#1f2937;background:#fff;padding:14px}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:10px}
+label{font-size:13px;color:#374151;display:flex;align-items:center;gap:6px}
+select{padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;background:#fff;font-size:13px}
+.badge{font-size:12px;padding:4px 10px;border-radius:999px;font-weight:600}
+.pass{background:#e6f4ee;color:#1d6b4f}.fail{background:#fdecec;color:#a33b39}
+.metrics{font-size:12px;color:#4b5563;margin-left:auto}
+#plot{height:420px}#spectrum{height:230px}.hint{font-size:12px;color:#6b7280;margin-top:6px}
+</style></head><body>
+<div class="controls">
+  <label>条件 <select id="cond"></select></label>
+  <span id="badge" class="badge"></span>
+  <span class="metrics" id="metrics"></span>
+</div>
+<div id="plot"></div>
+<div id="spectrum"></div>
+<div class="hint">上图：实测损失（蓝）、sigmoid 拟合（红）、每个模态的拐点时间 1/(ηλ)（灰色竖线）。背景带：浅蓝=慢启动，浅橙=快速下降，浅绿=慢尾。下图：谱的离散分布，横轴与上图对齐。</div>
+<script src="data.js"></script>
+<script>
+const D=window.D4_SPECTRUM, conds=D.conditions;
+const sel=document.getElementById('cond'), badge=document.getElementById('badge'), metrics=document.getElementById('metrics');
+function current(){return conds[+sel.value]}
+function theory(c,t){return c.weights.reduce((s,w,i)=>s+w*Math.pow(1-.1*c.lambda[i],2*t),0)}
+function sig(c,t){if(t<=0)return 1;return 1/(1+Math.pow(t/c.t50,c.beta))}
+function draw(){
+  const c=current();
+  const tFast=1/(.1*Math.max(...c.lambda)), tSlow=1/(.1*Math.min(...c.lambda));
+  const th=c.steps.map(t=>theory(c,t)), sg=c.steps.map(t=>sig(c,t));
+  const shapes=[
+    {type:'rect',xref:'x',yref:'paper',x0:1,x1:tFast,y0:0,y1:1,fillcolor:'#eaf4fb',line:{width:0},layer:'below'},
+    {type:'rect',xref:'x',yref:'paper',x0:tFast,x1:tSlow,y0:0,y1:1,fillcolor:'#fff3e6',line:{width:0},layer:'below'},
+    {type:'rect',xref:'x',yref:'paper',x0:tSlow,x1:10000,y0:0,y1:1,fillcolor:'#eef7f1',line:{width:0},layer:'below'}
+  ];
+  for(const t of c.knee_time){
+    shapes.push({type:'line',x0:t,x1:t,y0:0,y1:0.045,yref:'paper',line:{color:'#9ca3af',width:1}});
+  }
+  Plotly.react('plot',[
+    {x:c.steps,y:c.loss,mode:'lines',name:'实测损失',line:{color:'#1677b8',width:2.4}},
+    {x:c.steps,y:th,mode:'lines',name:'模态和',line:{color:'#111827',width:1.4,dash:'dash'}},
+    {x:c.steps,y:sg,mode:'lines',name:'sigmoid 拟合',line:{color:'#ce4b49',width:2.2,dash:'dot'}}
+  ],{margin:{l:64,r:20,t:12,b:40},hovermode:'x unified',legend:{orientation:'h',y:1.1},
+     shapes, xaxis:{title:'训练步数',type:'log',dtick:1,range:[0,4]},
+     yaxis:{title:'归一化损失',type:'log',exponentformat:'power',range:[-12,0.1]},
+     plot_bgcolor:'#fff',paper_bgcolor:'#fff'},{displayModeBar:false,responsive:true});
+  const maxw=Math.max(...c.weights);
+  const stems=[];
+  c.knee_time.forEach((t,i)=>{
+    stems.push({x:[t,t],y:[0,c.weights[i]],mode:'lines',line:{color:'#6b7280',width:1.5},showlegend:false,hoverinfo:'skip'});
+    stems.push({x:[t],y:[c.weights[i]],mode:'markers',marker:{color:'#c88b16',size:7},showlegend:false,
+      hovertemplate:'拐点 %{x:.1f} 步<br>权重 %{y:.3f}<extra></extra>'});
+  });
+  Plotly.react('spectrum',stems,{margin:{l:64,r:20,t:8,b:40},showlegend:false,
+     xaxis:{title:'该模态的拐点时间 1/(ηλ)',type:'log',dtick:1,range:[0,4]},
+     yaxis:{title:'损失权重 w',range:[0,maxw*1.15]},
+     plot_bgcolor:'#fff',paper_bgcolor:'#fff'},{displayModeBar:false,responsive:true});
+  const ok=c.pass_cells===3;
+  badge.textContent=ok?'3/3 通过':'0/3 通过'; badge.className='badge '+(ok?'pass':'fail');
+  metrics.textContent='RMSE '+c.rmse.toFixed(4)+' ｜ maxabs '+c.maxabs.toFixed(4)+' ｜ β '+c.beta.toFixed(3)+' ｜ 有效模态数 '+c.effective_modes.toFixed(1);
+}
+conds.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=c.id+'（k='+c.k+'）';sel.appendChild(o)});
+sel.addEventListener('change',draw);
+window.addEventListener('resize',draw);
+draw();
+</script></body></html>

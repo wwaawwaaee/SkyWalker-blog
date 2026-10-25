@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D4 误差地图</title>
+<script src="plotly.min.js"></script>
+<style>
+body{margin:0;font-family:"Inter","Microsoft YaHei",system-ui,sans-serif;color:#1f2937;background:#fff;padding:14px}
+#map{height:430px}#param{height:300px}.note{font-size:12px;color:#6b7280}
+</style></head><body>
+<div id="map"></div>
+<div id="param"></div>
+<div class="note">虚线是注册阈值：RMSE .03、maxabs .05。只有落在左下角区域的点才算通过。悬停查看具体条件；谱比=100、α=.5 与 α 扫描中的 α=.5 是同一条件，图中只画一次。</div>
+<script src="data.js"></script>
+<script>
+const D=window.D4_DATA, T=D.thresholds;
+const pts=D.conditions.filter(c=>!c.duplicate).map(c=>({...c,label:c.family==='alpha_scan'?('α='+c.alpha.toFixed(2)+'（谱比100）'):('谱比='+c.ratio+'（α=.5）')}));
+Plotly.newPlot('map',[
+  {x:pts.filter(p=>p.pass_cells===3).map(p=>p.rmse),y:pts.filter(p=>p.pass_cells===3).map(p=>p.maxabs),
+   text:pts.filter(p=>p.pass_cells===3).map(p=>p.label),mode:'markers',
+   marker:{color:'#20836b',size:13},name:'通过 3/3',hovertemplate:'%{text}<br>RMSE %{x:.4f}<br>maxabs %{y:.4f}<extra></extra>'},
+  {x:pts.filter(p=>p.pass_cells!==3).map(p=>p.rmse),y:pts.filter(p=>p.pass_cells!==3).map(p=>p.maxabs),
+   text:pts.filter(p=>p.pass_cells!==3).map(p=>p.label),mode:'markers',
+   marker:{color:'#ce4b49',size:13},name:'失败 0/3',hovertemplate:'%{text}<br>RMSE %{x:.4f}<br>maxabs %{y:.4f}<extra></extra>'}
+],{margin:{l:64,r:20,t:20,b:46},showlegend:true,
+   xaxis:{title:'RMSE（阈值 0.03）',range:[.015,.075]},yaxis:{title:'maxabs（阈值 0.05）',range:[.025,.19]},
+   shapes:[{type:'line',x0:T.rmse,x1:T.rmse,y0:0,y1:.2,line:{color:'#ce4b49',dash:'dash'}},
+           {type:'line',x0:0,x1:.08,y0:T.maxabs,y1:T.maxabs,line:{color:'#ce4b49',dash:'dash'}}],
+   annotations:[{x:T.rmse,y:.19,text:'RMSE=0.03',showarrow:false,xanchor:'left',font:{size:11,color:'#a33b39'}},
+                {x:.017,y:T.maxabs,text:'maxabs=0.05',showarrow:false,yanchor:'bottom',font:{size:11,color:'#a33b39'}}],
+   plot_bgcolor:'#fff',paper_bgcolor:'#fff'},{displayModeBar:false,responsive:true});
+const fams=[{key:'alpha_scan',name:'α 扫描（谱比 100）',color:'#1677b8'},{key:'ratio_scan',name:'谱比扫描（α=.5）',color:'#c88b16'}];
+const paramTraces=fams.map(f=>{const g=pts.filter(p=>p.family===f.key);
+  return {x:g.map(p=>p.t50),y:g.map(p=>p.beta),mode:'markers',text:g.map(p=>f.key==='alpha_scan'?('α='+p.alpha.toFixed(2)):('谱比='+p.ratio)),
+    marker:{color:f.color,size:12,symbol:f.key==='alpha_scan'?'circle':'diamond'},name:f.name,
+    hovertemplate:'%{text}<br>t50 %{x:.1f} 步<br>β %{y:.3f}<extra></extra>'}});
+Plotly.newPlot('param',paramTraces,{margin:{l:64,r:20,t:10,b:44},xaxis:{title:'拟合中点 t50（步）',type:'log',dtick:1},yaxis:{title:'拟合陡度 β'},
+  legend:{orientation:'h',y:1.12},plot_bgcolor:'#fff',paper_bgcolor:'#fff'},{displayModeBar:false,responsive:true});
+</script></body></html>

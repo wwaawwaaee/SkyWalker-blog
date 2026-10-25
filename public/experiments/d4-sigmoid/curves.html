@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D4 训练曲线交互</title>
+<script src="plotly.min.js"></script>
+<style>
+body{margin:0;font-family:"Inter","Microsoft YaHei",system-ui,sans-serif;color:#1f2937;background:#fff;padding:14px}
+.controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:10px}
+label{font-size:13px;color:#374151;display:flex;align-items:center;gap:6px}
+select{padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;background:#fff;font-size:13px}
+.badge{font-size:12px;padding:4px 10px;border-radius:999px;font-weight:600}
+.pass{background:#e6f4ee;color:#1d6b4f}.fail{background:#fdecec;color:#a33b39}
+.metrics{font-size:12px;color:#4b5563;margin-left:auto}
+#plot{height:430px}#resid{height:190px}
+.hint{font-size:12px;color:#6b7280;margin-top:6px}
+</style></head><body>
+<div class="controls">
+  <label>实验族 <select id="family"><option value="alpha_scan">固定谱比 100，改变 α</option><option value="ratio_scan">固定 α=.5，改变谱比</option></select></label>
+  <label>条件 <select id="cond"></select></label>
+  <label>纵轴 <select id="yscale"><option value="log">对数</option><option value="linear">线性</option></select></label>
+  <label>横轴 <select id="xscale"><option value="log">对数</option><option value="linear">线性</option></select></label>
+  <label><input type="checkbox" id="marks" checked> 标注中点/半衰期</label>
+  <span id="badge" class="badge"></span>
+  <span class="metrics" id="metrics"></span>
+</div>
+<div id="plot"></div>
+<div id="resid"></div>
+<div class="hint">实线为实测训练损失；虚线为双指数理论；点线为最小二乘 sigmoid。红色竖线是 sigmoid 的拐点（拟合中点 t50），灰色竖线是真实半衰期。残差图只显示登记评价窗口 0–4997 步。鼠标悬停可读数，滚轮或拖拽可缩放。</div>
+<script src="data.js"></script>
+<script>
+const D=window.D4_DATA, conds=D.conditions;
+const fam=document.getElementById('family'), sel=document.getElementById('cond'),
+      ys=document.getElementById('yscale'), xs=document.getElementById('xscale'),
+      badge=document.getElementById('badge'), metrics=document.getElementById('metrics');
+function current(){return conds[+sel.value]}
+function theory(c,t){const a=c.alpha, lf=.01*c.ratio;return a*Math.pow(1-.1*.01,2*t)+(1-a)*Math.pow(1-.1*lf,2*t)}
+function sigmoid(c,t){if(t<=0)return 1;return 1/(1+Math.pow(t/c.t50,c.beta))}
+function trueHalf(c){let lo=0,hi=10000;for(let i=0;i<90;i++){const m=(lo+hi)/2;if(theory(c,m)>.5)lo=m;else hi=m;}return (lo+hi)/2}
+function rebuildOptions(){
+  const keep=fam.value; sel.innerHTML='';
+  conds.forEach((c,i)=>{ if(c.family!==keep) return; const o=document.createElement('option'); o.value=i;
+    o.textContent=c.family==='alpha_scan'?('α = '+c.alpha.toFixed(2)):('谱比 = '+c.ratio+(c.duplicate?'（与 α 扫描重复）':'')); sel.appendChild(o) });
+  const first=conds.findIndex(c=>c.family===keep); sel.value=first;
+}
+function draw(){
+  const c=current(), ylog=ys.value==='log', xlog=xs.value==='log';
+  const th=c.steps.map(theory), sg=c.steps.map(t=>sigmoid(c,t));
+  const half=trueHalf(c), showMarks=document.getElementById('marks').checked;
+  const layout={margin:{l:64,r:20,t:28,b:42},hovermode:'x unified',legend:{orientation:'h',y:1.12,x:0},
+     xaxis:{title:'训练步数',type:xlog?'log':'linear',dtick:xlog?1:null,range:xlog?[0,4]:undefined},
+     yaxis:{title:'归一化损失',type:ylog?'log':'linear',exponentformat:'power',range:ylog?[-12,0.1]:[0,1.05]},
+     plot_bgcolor:'#fff',paper_bgcolor:'#fff'};
+  if(showMarks){
+    layout.shapes=[
+      {type:'line',x0:c.t50,x1:c.t50,y0:0,y1:1,yref:'paper',line:{color:'#ce4b49',dash:'dash',width:1.2}},
+      {type:'line',x0:half,x1:half,y0:0,y1:1,yref:'paper',line:{color:'#4b5563',dash:'dot',width:1.2}}
+    ];
+    layout.annotations=[
+      {xref:'paper',yref:'paper',x:0.012,y:0.985,text:'红＝拟合中点 t50='+c.t50.toFixed(1)+' ｜ 灰＝真实半衰期='+half.toFixed(1),
+       showarrow:false,xanchor:'left',yanchor:'top',font:{size:11,color:'#4b5563'},
+       bgcolor:'rgba(255,255,255,0.82)',borderpad:3}
+    ];
+  }
+  Plotly.react('plot',[
+    {x:c.steps,y:c.loss,mode:'lines',name:'实测损失',line:{color:'#1677b8',width:2.4}},
+    {x:c.steps,y:th,mode:'lines',name:'双指数理论',line:{color:'#111827',width:1.6,dash:'dash'}},
+    {x:c.steps,y:sg,mode:'lines',name:'最小二乘 sigmoid',line:{color:'#ce4b49',width:2.2,dash:'dot'}}
+  ],layout,{displayModeBar:false,responsive:true});
+  const resid=c.grid.map((t,i)=>c.sigmoid[i]-c.observed[i]);
+  Plotly.react('resid',[
+    {x:c.grid,y:resid,mode:'markers',name:'sigmoid−实测',marker:{color:'#7c4d9e',size:5}},
+    {x:[0,4997],y:[.05,.05],mode:'lines',name:'+0.05 阈值',line:{color:'#ce4b49',dash:'dash',width:1.2}},
+    {x:[0,4997],y:[-.05,-.05],mode:'lines',name:'−0.05 阈值',line:{color:'#ce4b49',dash:'dash',width:1.2}}
+  ],{margin:{l:64,r:20,t:12,b:40},showlegend:false,hovermode:'x',
+     xaxis:{title:'评价网格步数',type:'log',dtick:1},yaxis:{title:'残差',range:[-.2,.2]},
+     plot_bgcolor:'#fff',paper_bgcolor:'#fff'},{displayModeBar:false,responsive:true});
+  const ok=c.pass_cells===3;
+  badge.textContent=ok?'3/3 通过':'0/3 通过'; badge.className='badge '+(ok?'pass':'fail');
+  metrics.textContent='RMSE '+c.rmse.toFixed(4)+' ｜ maxabs '+c.maxabs.toFixed(4)+' ｜ t50 '+c.t50.toFixed(1)+' 步 ｜ 半衰期 '+half.toFixed(1)+' 步（偏差 '+(100*(c.t50/half-1)).toFixed(1)+'%）｜ β '+c.beta.toFixed(3);
+}
+fam.addEventListener('change',()=>{rebuildOptions();draw()});
+sel.addEventListener('change',draw); ys.addEventListener('change',draw); xs.addEventListener('change',draw);
+document.getElementById('marks').addEventListener('change',draw);
+rebuildOptions(); draw();
+</script></body></html>
